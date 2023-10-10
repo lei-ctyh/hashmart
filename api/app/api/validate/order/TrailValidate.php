@@ -1,0 +1,20 @@
+<?php
+
+namespace app\api\validate\order;
+
+use think\Validate;
+
+class TrailValidate extends Validate
+{
+    protected $rule = [
+        'blindbox_id' => 'require',
+        'num' => 'require|number',
+        'use_integral' => 'require|number'
+    ];
+
+    protected $message = [
+        'blindbox_id.require' => '盲盒id不能为空',
+        'num.require' => '购买数量不能为空',
+        'use_integral.require' => '是否使用哈希币不能为空'
+    ];
+}

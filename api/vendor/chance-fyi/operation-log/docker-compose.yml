@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  php:
+    image: chance-log
+    build:
+      context: .
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/home
+    working_dir: /home
+    environment:
+      - PHP_IDE_CONFIG=serverName=log
+    tty: true
+  mysql:
+    image: mysql
+    ports:
+      - "33060:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "test"
+  mysql1:
+    image: mysql
+    ports:
+      - "33061:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "test1"

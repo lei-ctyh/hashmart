@@ -1,0 +1,8 @@
+.idea
+/.vscode
+*.log
+.env
+/.idea
+/public/*_install_back.php
+/extend/install/install.lock
+/public/*.lock
