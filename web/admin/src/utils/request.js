@@ -39,7 +39,7 @@ axios.interceptors.response.use(
 				});
 			}
 			flag = 2
-			
+
 			setTimeout(() => {
 				router.replace({path: '/login'});
 			}, 1000)
@@ -49,11 +49,11 @@ axios.interceptors.response.use(
 				message: response.data.msg
 			});
 		}
-		
+
 		return response;
 	},
 	(error) => {
-		console.log('响应错误2', error)
+		console.log('响应错误', error)
 		if (error.response) {
 			if (error.response.status == 404) {
 				ElNotification.error({

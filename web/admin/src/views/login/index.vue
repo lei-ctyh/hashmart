@@ -4,7 +4,7 @@
 			<div class="login_adv__title">
 				<h2>HashMart</h2>
 				<h4>{{ $t('login.slogan') }}</h4>
-				
+
 			</div>
 			<div class="login_adv__mask"></div>
 			<div class="login_adv__bottom">
@@ -77,7 +77,6 @@
 			this.$store.commit("clearViewTags")
 			this.$store.commit("clearKeepLive")
 			this.$store.commit("clearIframeList")
-			console.log('%c SCUI %c Gitee: https://gitee.com/lolicode/scui', 'background:#666;color:#fff;border-radius:3px;', '')
 		},
 		methods: {
 			configDark(){

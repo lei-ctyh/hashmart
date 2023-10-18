@@ -1,19 +1,4 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : demo_hashmart
- Source Server Type    : MySQL
- Source Server Version : 50741
- Source Host           : 47.102.142.124:3306
- Source Schema         : demo_hashmart
-
- Target Server Type    : MySQL
- Target Server Version : 50741
- File Encoding         : 65001
-
- Date: 31/03/2023 15:41:24
-*/
-
+USE hashmart;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------

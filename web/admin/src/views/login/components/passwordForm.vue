@@ -13,7 +13,7 @@
 		<el-form-item>
 			<el-button type="primary" style="width: 100%;" :loading="islogin" @click="login">{{ $t('login.signIn') }}</el-button>
 		</el-form-item>
-		
+
 	</el-form>
 </template>
 
@@ -39,7 +39,7 @@
 					],
 					captcha: [
 						{required: true, message: '请输入验证码', trigger: 'blur'}
-					]	
+					]
 				},
 				islogin: false,
 			}
@@ -58,7 +58,7 @@
 			// 更换验证码
 			async changeCaptcha() {
 				let res = await this.$API.auth.captcha.get()
-				this.captchaSrc = 'data:image/png;base64,' + res.data.img
+				this.captchaSrc = res.data.img
 				this.form.key = res.data.key
 			},
 			async login() {
@@ -80,7 +80,7 @@
 						expires: this.form.autologin? 24*60*60 : 0
 					})
 					this.$TOOL.data.set("USER_INFO", user.data.userInfo)
-					
+
 					// 获取菜单
 					if (user.data.menu.length ==0) {
 						this.islogin = false
@@ -99,8 +99,8 @@
 					this.changeCaptcha()
 					return false
 				}
-			
-	
+
+
 				this.$router.replace({
 					path: '/'
 				})
