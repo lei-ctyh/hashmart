@@ -110,6 +110,8 @@ var http = {
 	 * @param  {参数} config
 	 */
 	post: function(url, data={}, config={}) {
+		// eslint-disable-next-line no-debugger
+		debugger
 		return new Promise((resolve, reject) => {
 			axios({
 				method: 'post',

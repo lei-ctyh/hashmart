@@ -1,4 +1,4 @@
-package com.wangyameng.redis;
+package com.wangyameng.common.util.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
 @Component
-public class RedisCache
+public class RedisCacheUtil
 {
     @Autowired
     public RedisTemplate redisTemplate;

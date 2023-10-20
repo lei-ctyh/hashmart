@@ -1,16 +1,19 @@
 package com.wangyameng.api.admin;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wangyameng.redis.RedisCache;
+import com.wangyameng.common.core.AjaxResult;
+import com.wangyameng.common.core.ServiceException;
+import com.wangyameng.common.util.redis.RedisCacheUtil;
 import com.wf.captcha.SpecCaptcha;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -21,26 +24,44 @@ import java.util.concurrent.TimeUnit;
  * @date 2023/10/18 21:42
  */
 
+@Api(tags = "用户登录")
 @RestController
 public class LoginController {
     @Autowired
-    private RedisCache redisCache;
+    private RedisCacheUtil redisCacheUtil;
 
+
+    @PostMapping("admin/user.login/login")
+    @ApiOperation(value = "用户登录请求")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String", dataTypeClass = String.class,paramType = ""),
+            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "verCode", value = "验证码", required = true, dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "verKey", value = "验证码key", required = true, dataType = "String", dataTypeClass = String.class)
+    }
+    )
+    public AjaxResult login(String username, String password, String captcha, String key) {
+        // 获取redis中的验证码
+        String redisCode = redisCacheUtil.getCacheObject(key);
+        // 判断验证码
+        if (captcha == null || !redisCode.equals(captcha.trim().toLowerCase())) {
+            throw new ServiceException("验证码错误!");
+        }
+        return AjaxResult.success();
+    }
+
+    @ApiOperation(value = "获取登录验证码")
     @GetMapping("admin/user.login/captcha")
-    public String captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public AjaxResult captcha() {
         SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, 5);
         String verCode = specCaptcha.text().toLowerCase();
         String key = UUID.randomUUID().toString();
         // 存入redis并设置过期时间为30分钟
-        redisCache.setCacheObject(key,verCode,30, TimeUnit.MINUTES);
+        redisCacheUtil.setCacheObject(key, verCode, 30, TimeUnit.MINUTES);
         // 将key和base64返回给前端
-        JSONObject resp = new JSONObject();
         JSONObject data = new JSONObject();
         data.put("key", key);
         data.put("img", specCaptcha.toBase64());
-        resp.put("code", 0);
-        resp.put("data", data);
-        resp.put("msg", "success");
-        return resp.toString();
+        return AjaxResult.success(data);
     }
 }
