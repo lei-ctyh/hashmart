@@ -8,7 +8,7 @@ HashMart 基于`SpringBoot`、`Vue`、`uniapp`的前后端分离的盲盒商城�
 * JDK >= 1.8
 * MySQL >= 5.8 
 * Maven >= 3.0 
-* Node >= 12 
+* Node >=  16.14.2
 * Redis >= 3
 
 ### 技术栈

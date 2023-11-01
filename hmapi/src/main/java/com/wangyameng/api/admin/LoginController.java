@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.ServiceException;
 import com.wangyameng.common.util.redis.RedisCacheUtil;
+import com.wangyameng.dto.LoginDto;
 import com.wf.captcha.SpecCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -34,13 +36,15 @@ public class LoginController {
     @PostMapping("admin/user.login/login")
     @ApiOperation(value = "用户登录请求")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String", dataTypeClass = String.class,paramType = ""),
-            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "verCode", value = "验证码", required = true, dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "verKey", value = "验证码key", required = true, dataType = "String", dataTypeClass = String.class)
+            @ApiImplicitParam(name = "loginDto", value = "登录dto", required = true, dataType = "String", dataTypeClass = LoginDto.class, paramType = "body"),
     }
     )
-    public AjaxResult login(String username, String password, String captcha, String key) {
+    public AjaxResult login(@RequestBody LoginDto loginDto) {
+        String username = loginDto.getUsername();
+        String password = loginDto.getPassword();
+        String captcha = loginDto.getCaptcha();
+        String key = loginDto.getKey();
+
         // 获取redis中的验证码
         String redisCode = redisCacheUtil.getCacheObject(key);
         // 判断验证码
