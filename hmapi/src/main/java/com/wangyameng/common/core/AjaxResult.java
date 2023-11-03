@@ -2,26 +2,20 @@ package com.wangyameng.common.core;
 
 import com.wangyameng.common.constant.HttpStatus;
 import com.wangyameng.common.util.text.StringUtils;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-/**
- * 操作消息提醒
- * 
- * @author ruoyi
- */
 public class AjaxResult extends HashMap<String, Object>
 {
     private static final long serialVersionUID = 1L;
 
-    /** 状态码 */
     public static final String CODE_TAG = "code";
 
-    /** 返回内容 */
     public static final String MSG_TAG = "msg";
 
-    /** 数据对象 */
     public static final String DATA_TAG = "data";
 
     /**
@@ -213,5 +207,14 @@ public class AjaxResult extends HashMap<String, Object>
     {
         super.put(key, value);
         return this;
+    }
+
+
+    public static AjaxResult dataReturn(int code, String msg) {
+        return new AjaxResult(code, msg);
+    }
+
+    public static AjaxResult dataReturn(int code, String msg,Object data) {
+        return new AjaxResult(code, msg,data);
     }
 }

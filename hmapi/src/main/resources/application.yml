@@ -5,8 +5,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/hashmart
-    username: hashmart
-    password: hashmart
+    username: root
+    password: 123456
 
   #redis相关配置
   redis:
@@ -26,14 +26,19 @@ spring:
         max-active: 1000
         # 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接抛出JedisConnectionException
         max-wait: 2000
+
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
-  devtools:
-    restart:
-      enabled: true  #设置开启热部署
-      additional-paths: src/main/java #重启目录
-      exclude: WEB-INF/**
+
+mybatis-plus:
+  configuration:
+    # 显示SQL语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      table-prefix: hashmart_
+
 springfox:
   documentation:
     enabled: true
