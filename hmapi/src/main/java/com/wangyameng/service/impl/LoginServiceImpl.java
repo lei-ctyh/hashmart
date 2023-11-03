@@ -85,6 +85,10 @@ public class LoginServiceImpl implements LoginService {
         }
 
         HashMap<String, Object> payload = new HashMap<>(4);
+        payload.put("id", sysAdmin.getId());
+        payload.put("role_id", sysAdmin.getRoleId());
+        payload.put("nickname", sysAdmin.getNickname());
+        payload.put("avatar", sysAdmin.getAvatar());
         String token = PubfuncUtil.setJWT(payload);
 
         List<SysMenu> menuList = getMenuList(sysRole);
