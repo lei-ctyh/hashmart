@@ -2,7 +2,10 @@ package com.wangyameng.common.util.pubfunc;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWTUtil;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +49,7 @@ public class PubfuncUtil {
                 put("nbf", System.currentTimeMillis());
                 // 失效时间
                 put("exp", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
-                putAll(data);
+                put("data",data);
             }
 
         };
@@ -54,6 +57,45 @@ public class PubfuncUtil {
         // todo 可以移植到二开参数中适配
         return JWTUtil.createToken(map, jwtKey.getBytes());
     }
+
+    /**
+     * 生成子孙树
+     * @param data 遍历所有数据, 每个数据加到其父节点下
+     * @return 子孙树json
+     */
+    public static JSONArray makeTree(JSONArray data) {
+        Map<Integer, JSONObject> res = new HashMap<>();
+        JSONArray tree = new JSONArray();
+
+        // 整理数组
+        for (Object o : data) {
+            JSONObject item = (JSONObject) o;
+            res.put((Integer) item.get("id"), item);
+        }
+
+        // 查询子孙
+        for (Object o : data) {
+            JSONObject item = (JSONObject) o;
+            if (item.getInteger("pid") != 0) {
+                JSONArray children = res.get(item.getInteger("pid")).getJSONArray("children");
+                if (children == null) {
+                    children = new JSONArray();
+                }
+                children.add(item);
+                res.get(item.getInteger("pid")).put("children", children);
+            }
+        }
+
+        // 去除杂质
+        for (Object o : data) {
+            JSONObject item = (JSONObject) o;
+            if (item.getInteger("pid") == 0) {
+                tree.add(item);
+            }
+        }
+        return tree;
+    }
+
 
     public static void main(String[] args) {
         setJWT(null);

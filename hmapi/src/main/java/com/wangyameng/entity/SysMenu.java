@@ -15,9 +15,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class SysMenu extends Model<SysMenu> {
     // ID
-    private Object id;
+    private Integer id;
     // 上级菜单
-    private Object pid;
+    private Integer pid;
     // 类型 1:菜单 2:功能
     private Integer type;
     // 标题
@@ -40,19 +40,19 @@ public class SysMenu extends Model<SysMenu> {
     private Date updateTime;
 
 
-    public Object getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Object getPid() {
+    public Integer getPid() {
         return pid;
     }
 
-    public void setPid(Object pid) {
+    public void setPid(Integer pid) {
         this.pid = pid;
     }
 

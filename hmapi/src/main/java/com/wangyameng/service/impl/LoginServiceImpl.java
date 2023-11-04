@@ -1,6 +1,8 @@
 package com.wangyameng.service.impl;
 
 import cn.hutool.jwt.JWTUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -91,13 +93,17 @@ public class LoginServiceImpl implements LoginService {
         payload.put("avatar", sysAdmin.getAvatar());
         String token = PubfuncUtil.setJWT(payload);
 
-        List<SysMenu> menuList = getMenuList(sysRole);
-        for (SysMenu sysMenu : menuList) {
+        // 获取菜单权限
+        JSONArray menuList = getMenuList(sysRole);
+        // todo 记录权限map
+        // todo 记录登录日志
 
-        }
-
-
-        return null;
+        JSONObject rtnData = new JSONObject();
+        JSONObject userInfo = new JSONObject();
+        rtnData.put("userInfo", userInfo);
+        rtnData.put("token", token);
+        rtnData.put("menu", menuList);
+        return AjaxResult.dataReturn(0, "登录成功", rtnData);
     }
 
     @Override
@@ -116,19 +122,46 @@ public class LoginServiceImpl implements LoginService {
 
     /**
      * 获取角色权限
+     *
      * @param sysRole 角色entity
      * @return 权限集合
      */
-    private  List<SysMenu> getMenuList(SysRole sysRole) {
-        List<SysMenu> menuList = new ArrayList();
+    private JSONArray getMenuList(SysRole sysRole) {
+        JSONArray menuJsonArr = new JSONArray();
         // 超级管理员直接是全部权限
         LambdaQueryWrapper<SysMenu> menuWrapper = null;
         if (sysRole.getId() != 1) {
             menuWrapper = new LambdaQueryWrapper<>();
             menuWrapper.eq(SysMenu::getStatus, 1)
-                       .in(SysMenu::getId, sysRole.getRule());
+                       .in(SysMenu::getId, sysRole.getRule())
+                       .orderByDesc(SysMenu::getSort);
         }
-        menuList = sysMenuDao.selectList(menuWrapper);
-        return menuList;
+        List<SysMenu> menuList = sysMenuDao.selectList(menuWrapper);
+        for (SysMenu sysMenu : menuList) {
+            JSONObject menuJson = new JSONObject();
+            menuJson.put("id", sysMenu.getId());
+            menuJson.put("pid", sysMenu.getPid());
+            menuJson.put("auth", sysMenu.getAuth());
+            menuJson.put("type", sysMenu.getType());
+            menuJson.put("name", sysMenu.getName());
+            menuJson.put("path", sysMenu.getPath());
+            menuJson.put("icon", sysMenu.getIcon());
+
+            JSONObject metaJson = new JSONObject();
+            metaJson.put("icon", sysMenu.getIcon());
+            metaJson.put("title", sysMenu.getName());
+            metaJson.put("type", "menu");
+            metaJson.put("hidden", sysMenu.getType() == 2);
+            menuJson.put("meta", metaJson);
+
+            if (sysMenu.getPid() != 0) {
+                menuJson.put("component", sysMenu.getComponent());
+            }
+            menuJsonArr.add(menuJson);
+        }
+
+        return PubfuncUtil.makeTree(menuJsonArr);
     }
+
+
 }
