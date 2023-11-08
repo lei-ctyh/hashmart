@@ -1,13 +1,11 @@
 package com.wangyameng.common.intercept;
 
+import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author zhanglei
@@ -25,6 +23,8 @@ public class JwtInterceptor implements HandlerInterceptor {
         } else {
             // 获取请求头中的token
             String token = request.getHeader("token");
+            PubfuncUtil.getJWT(token);
+
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().println("{}");
             return false;

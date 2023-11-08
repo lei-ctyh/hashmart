@@ -82,6 +82,7 @@ class LoginService
                     $authMap[$vo['auth']] = 1;
                 }
             }
+            Log::error("缓存权限".$authMap);
             cache($info['id'] . '_auth_map', $authMap);
         }
 

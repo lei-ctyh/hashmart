@@ -1,6 +1,7 @@
 package com.wangyameng.common.util.pubfunc;
 
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -59,6 +60,14 @@ public class PubfuncUtil {
     }
 
     /**
+     * getJWT
+     * @param token
+     */
+    public static JWT getJWT(String token) {
+        return JWTUtil.parseToken(token);
+    }
+
+    /**
      * 生成子孙树
      * @param data 遍历所有数据, 每个数据加到其父节点下
      * @return 子孙树json
@@ -100,4 +109,6 @@ public class PubfuncUtil {
     public static void main(String[] args) {
         setJWT(null);
     }
+
+
 }

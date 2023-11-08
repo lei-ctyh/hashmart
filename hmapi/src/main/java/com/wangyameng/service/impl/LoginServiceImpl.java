@@ -1,5 +1,9 @@
 package com.wangyameng.service.impl;
+import java.util.Date;
 
+import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.TimedCache;
+import cn.hutool.core.date.DateUnit;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -10,10 +14,12 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.common.util.redis.RedisCacheUtil;
 import com.wangyameng.dao.SysAdminDao;
+import com.wangyameng.dao.SysAdminLogDao;
 import com.wangyameng.dao.SysMenuDao;
 import com.wangyameng.dao.SysRoleDao;
 import com.wangyameng.dto.LoginDto;
 import com.wangyameng.entity.SysAdmin;
+import com.wangyameng.entity.SysAdminLog;
 import com.wangyameng.entity.SysMenu;
 import com.wangyameng.entity.SysRole;
 import com.wangyameng.service.LoginService;
@@ -44,6 +50,8 @@ public class LoginServiceImpl implements LoginService {
     SysRoleDao sysRoleDao;
     @Autowired
     SysMenuDao sysMenuDao;
+    @Autowired
+    SysAdminLogDao sysAdminLogDao;
 
     @Override
     public AjaxResult doLogin(LoginDto loginDto) {
@@ -94,15 +102,30 @@ public class LoginServiceImpl implements LoginService {
         String token = PubfuncUtil.setJWT(payload);
 
         // 获取菜单权限
-        JSONArray menuList = getMenuList(sysRole);
-        // todo 记录权限map
+        JSONArray menuJsonArr = getMenuList(sysRole);
+        JSONArray menuTree = PubfuncUtil.makeTree(menuJsonArr);
+
+        // 记录权限map
+        String authMapKey = sysAdmin.getId() + "_auth_map";
+        Map<String, String> authMap = new HashMap<>(16);
+        for (Object o : menuJsonArr) {
+            JSONObject menuJson = (JSONObject) o;
+            String auth = menuJson.getString("auth");
+            if (com.wangyameng.common.util.text.StringUtils.isNotBlank(auth)) {
+                authMap.put(auth, "1");
+            }
+        }
+        redisCacheUtil.setCacheMap(authMapKey, authMap);
+
+
         // todo 记录登录日志
+
 
         JSONObject rtnData = new JSONObject();
         JSONObject userInfo = new JSONObject();
         rtnData.put("userInfo", userInfo);
         rtnData.put("token", token);
-        rtnData.put("menu", menuList);
+        rtnData.put("menu", menuTree);
         return AjaxResult.dataReturn(0, "登录成功", rtnData);
     }
 
@@ -159,8 +182,8 @@ public class LoginServiceImpl implements LoginService {
             }
             menuJsonArr.add(menuJson);
         }
+        return menuJsonArr;
 
-        return PubfuncUtil.makeTree(menuJsonArr);
     }
 
 
