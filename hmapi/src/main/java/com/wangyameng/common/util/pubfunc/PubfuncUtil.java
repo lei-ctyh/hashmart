@@ -5,6 +5,9 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.wangyameng.common.util.redis.RedisCacheUtil;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +67,13 @@ public class PubfuncUtil {
      * @param token
      */
     public static JWT getJWT(String token) {
-        return JWTUtil.parseToken(token);
+        // 先验证token的有效性
+        String jwtKey = "HashMart20221225!@#";
+        boolean verify = JWTUtil.verify(token, jwtKey.getBytes());
+        if (verify) {
+            return JWTUtil.parseToken(token);
+        }
+        return null;
     }
 
     /**
@@ -104,7 +113,6 @@ public class PubfuncUtil {
         }
         return tree;
     }
-
 
     public static void main(String[] args) {
         setJWT(null);

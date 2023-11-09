@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
  * @createTime 2023-11-04 14:36:00
  */
 @Service
-
 public class HomeDataServiceImpl implements HomeDataService {
     @Override
     public AjaxResult getHomeData() {

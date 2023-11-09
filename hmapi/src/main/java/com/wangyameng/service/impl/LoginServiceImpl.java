@@ -110,7 +110,7 @@ public class LoginServiceImpl implements LoginService {
         Map<String, String> authMap = new HashMap<>(16);
         for (Object o : menuJsonArr) {
             JSONObject menuJson = (JSONObject) o;
-            String auth = menuJson.getString("auth");
+            String auth = StringUtils.lowerCase(menuJson.getString("auth"));
             if (com.wangyameng.common.util.text.StringUtils.isNotBlank(auth)) {
                 authMap.put(auth, "1");
             }

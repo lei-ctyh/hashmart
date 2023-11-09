@@ -1,5 +1,6 @@
 package com.wangyameng.service;
 
+import cn.hutool.jwt.JWT;
 import com.wangyameng.entity.SysAdminLog;
 
 /**
@@ -11,8 +12,11 @@ import com.wangyameng.entity.SysAdminLog;
  */
 public interface AdminLogService {
     /**
-     * 记录日志信息到hashmart_admin_log表中
+     * 写日志
+     * @param title 标题
+     * @param content 内容
+     * @param jwt jwt
      */
-    void writeLog(String title, String content);
+    public void writeLog(String title, String content, JWT jwt);
 
 }

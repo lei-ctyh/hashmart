@@ -35,6 +35,12 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.4.3.1</version>
         </dependency>
+        <!-- Todo 后续需要引入添加权限框架shiro -->
+        <!-- <dependency>
+            <groupId>org.crazycake</groupId>
+            <artifactId>shiro-redis-spring-boot-starter</artifactId>
+            <version>3.2.1</version>
+        </dependency> -->
         <!--mysql 驱动-->
         <dependency>
             <groupId>mysql</groupId>
@@ -91,6 +97,7 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.16</version>
         </dependency>
+
 
     </dependencies>
 
