@@ -55,7 +55,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 RedisCacheUtil redisCacheUtil = ApplicationContextHelper.popBean(RedisCacheUtil.class);
                 String authKey =  id+"_auth_map" ;
                 Map<String, Object> authMap = redisCacheUtil.getCacheMap(authKey);
-                String authPre = "admin/";
+                String authPre = "/admin/";
                 String routeUrl = request.getRequestURI().replaceFirst(authPre, "");
                 String authVal = (String) authMap.get(StringUtils.lowerCase(routeUrl));
                 String correctAuthVal = "1";

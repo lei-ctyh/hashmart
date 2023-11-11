@@ -121,8 +121,13 @@ public class LoginServiceImpl implements LoginService {
         // todo 记录登录日志
 
 
-        JSONObject rtnData = new JSONObject();
         JSONObject userInfo = new JSONObject();
+        userInfo.put("id", sysAdmin.getId());
+        userInfo.put("role_id", sysAdmin.getRoleId());
+        userInfo.put("userName", sysAdmin.getNickname());
+        userInfo.put("avatar", sysAdmin.getAvatar());
+
+        JSONObject rtnData = new JSONObject();
         rtnData.put("userInfo", userInfo);
         rtnData.put("token", token);
         rtnData.put("menu", menuTree);
