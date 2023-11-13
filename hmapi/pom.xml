@@ -42,6 +42,17 @@
             <version>3.2.1</version>
         </dependency> -->
         <!--mysql 驱动-->
+        <!-- 开发阶段需要引入热部署, 本质是进行了一次重新启动
+        idea 需要做以下参数设置
+        设置->构建,执行,部署->编译器->勾选自动构建项目
+        设置->高级设置->编译器->勾选即使开发的应用程序当前正在运行, 也允许启动
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+            <scope>true</scope>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

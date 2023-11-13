@@ -5,11 +5,8 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.wangyameng.common.util.redis.RedisCacheUtil;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,6 +109,26 @@ public class PubfuncUtil {
             }
         }
         return tree;
+    }
+
+    /**
+     * 日期格式化
+     * @param date
+     * @param format
+     * @return
+     */
+    public static String formatDate(Date date, String format) {
+        return new java.text.SimpleDateFormat(format).format(date);
+    }
+
+    /**
+     * 简化日期格式的使用
+     * @param date 需要格式化的日期
+     * @see com.wangyameng.common.util.pubfunc.PubfuncUtil#formatDate(java.util.Date, java.lang.String)
+     * @return 格式化的字符串 如2023-11-13 17:42:00
+     */
+    public static String formatDate(Date date) {
+        return formatDate(date, "yyyy-MM-dd HH:mm:ss");
     }
 
     public static void main(String[] args) {
