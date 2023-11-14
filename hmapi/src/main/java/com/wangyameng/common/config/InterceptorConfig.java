@@ -1,6 +1,7 @@
 package com.wangyameng.common.config;
 
-import com.wangyameng.common.intercept.JwtInterceptor;
+import com.wangyameng.api.admin.AdminInterceptor;
+import com.wangyameng.api.uniapp.UniappInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,8 +17,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new JwtInterceptor())
+        // 商户后台拦截
+        registry.addInterceptor(new AdminInterceptor())
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/user.login/**");
+
+        registry.addInterceptor(new UniappInterceptor())
+                .addPathPatterns("/uniapp/**")
+                // todo 排除路径需要整理
+                .excludePathPatterns("uniapp/user/address/**");
     }
 }

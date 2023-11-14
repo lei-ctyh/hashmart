@@ -2,7 +2,7 @@ package com.wangyameng.api.admin.user;
 
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.LoginDto;
-import com.wangyameng.service.LoginService;
+import com.wangyameng.service.admin.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

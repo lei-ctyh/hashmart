@@ -1,5 +1,5 @@
 module.exports = {
-	'apiroot': 'https://demo.hashmart.com.cn.api',
-	'imgroot': 'https://demo.hashmart.com.cn',
+	'apiroot': 'http://localhost:8888/uniapp',
+	'imgroot': 'http://localhost:8888',
 };
 

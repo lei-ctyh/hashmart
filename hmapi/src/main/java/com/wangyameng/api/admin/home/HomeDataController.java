@@ -1,7 +1,7 @@
 package com.wangyameng.api.admin.home;
 
 import com.wangyameng.common.core.AjaxResult;
-import com.wangyameng.service.HomeDataService;
+import com.wangyameng.service.admin.HomeDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

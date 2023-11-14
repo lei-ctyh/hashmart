@@ -5,6 +5,7 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.wangyameng.common.core.AjaxResult;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -109,6 +110,11 @@ public class PubfuncUtil {
             }
         }
         return tree;
+    }
+
+    public static AjaxResult checkOpen() {
+
+        return null;
     }
 
     /**
