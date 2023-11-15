@@ -1,5 +1,6 @@
 package com.wangyameng.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -19,7 +20,9 @@ public class SysSetting extends Model<SysSetting> {
     // 配置名
     private String text;
     // 编号
+    @TableField(value = "`key`")
     private String key;
+    @TableField(value = "`value`")
     // 配置的值
     private String value;
 

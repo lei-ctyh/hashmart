@@ -36,35 +36,36 @@ class HomeService
      * @param $param
      * @return array
      */
+
     public function getGoodsData($param)
-    {
-        $blindboxModel = new Blindbox();
+{
+    $blindboxModel = new Blindbox();
 
-        $blindboxIds = [];
-        $blindboxList = $blindboxModel->field('id,name,desc,pic,sales,hot_tag,recommend_tag,price')->with('detail')
-            ->order('sort desc')->paginate($param['limit'])->each(function ($item) use (&$blindboxIds) {
-                $blindboxIds[] = $item->id;
-            });
-        $blindboxDetail = new BlindboxDetail();
-
-        // 价格范围
-        $priceRangeList = $blindboxDetail->field('max(price) max_price,min(price) min_price,blindbox_id')->where([
-            ['blindbox_id', 'in', $blindboxIds]
-        ])->group('blindbox_id')->select();
-
-        $blindboxId2Price = [];
-        foreach ($priceRangeList as $vo) {
-            $blindboxId2Price[$vo['blindbox_id']] = [
-                'min_price' => $vo['min_price'],
-                'max_price' => $vo['max_price'],
-            ];
-        }
-
-        $blindboxList->each(function ($item) use($blindboxId2Price) {
-            $item->price_range = $blindboxId2Price[$item->id] ?? [];
-            return $item;
+    $blindboxIds = [];
+    $blindboxList = $blindboxModel->field('id,name,desc,pic,sales,hot_tag,recommend_tag,price')->with('detail')
+        ->order('sort desc')->paginate($param['limit'])->each(function ($item) use (&$blindboxIds) {
+            $blindboxIds[] = $item->id;
         });
+    $blindboxDetail = new BlindboxDetail();
 
-        return dataReturn(0, 'success', $blindboxList);
+    // 价格范围
+    $priceRangeList = $blindboxDetail->field('max(price) max_price,min(price) min_price,blindbox_id')->where([
+        ['blindbox_id', 'in', $blindboxIds]
+    ])->group('blindbox_id')->select();
+
+    $blindboxId2Price = [];
+    foreach ($priceRangeList as $vo) {
+        $blindboxId2Price[$vo['blindbox_id']] = [
+            'min_price' => $vo['min_price'],
+            'max_price' => $vo['max_price'],
+        ];
     }
+
+    $blindboxList->each(function ($item) use($blindboxId2Price) {
+        $item->price_range = $blindboxId2Price[$item->id] ?? [];
+        return $item;
+    });
+
+    return dataReturn(0, 'success', $blindboxList);
+}
 }
