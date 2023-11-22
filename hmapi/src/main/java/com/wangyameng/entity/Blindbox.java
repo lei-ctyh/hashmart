@@ -2,6 +2,7 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class Blindbox extends Model<Blindbox> {
     // 单抽价格
     private Double price;
     // 盲盒描述
+    @TableField("`desc`")
     private String desc;
     // 累计销量
     private Integer sales;

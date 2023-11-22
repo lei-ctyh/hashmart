@@ -25,7 +25,6 @@ import java.util.Map;
 public class UniappInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("请求地址: "+request.getRequestURI());
         return true;
         /* // 通过所有OPTION请求
         if(request.getMethod().equals(HttpMethod.OPTIONS.toString())){

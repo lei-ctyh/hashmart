@@ -39,10 +39,10 @@ public class PubfuncUtil {
      * 创建JSON WEB TOKEN (JWT)
      *
      * @param data 参数参考如下
-     *            id 用户ID
-     *            roleId 角色ID
-     *            nickname 昵称
-     *            avatar 用户头像
+     *             id 用户ID
+     *             roleId 角色ID
+     *             nickname 昵称
+     *             avatar 用户头像
      */
     public static String setJWT(HashMap<String, Object> data) {
         Map<String, Object> map = new HashMap<String, Object>() {
@@ -147,8 +147,9 @@ public class PubfuncUtil {
 
     /**
      * 获取系统参数
+     *
      * @param type 类型
-     * @param key 当前类型的键值
+     * @param key  当前类型的键值
      * @return 参数值
      */
     public static String getSdParam(String type, String key) {
@@ -161,6 +162,24 @@ public class PubfuncUtil {
             rtnValue = sysSetting.getValue();
         }
         return rtnValue;
+    }
+
+    /**
+     * 正则表达式替换域名
+     *
+     * @param url        资源链接
+     * @param domainName 目标域名
+     * @return 替换后的链接
+     */
+    public static String replaceDomainName(String url, String domainName) {
+        String regex = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}(/)";
+        return url.replaceAll(regex, domainName);
+    }
+
+    public static String replaceBecomeServerHost(String url) {
+        // todo 后期需要处理成可替换的 String serverHost = getSdParam("server", "host");
+        String serverHost = "http://localhost:8888";
+        return serverHost + replaceDomainName(url, "").replaceAll("HASHMART_URL", "");
     }
 
     public static void main(String[] args) {
