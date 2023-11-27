@@ -11,6 +11,7 @@ import com.wangyameng.dao.UserDao;
 import com.wangyameng.entity.Order;
 import com.wangyameng.entity.User;
 import com.wangyameng.service.admin.HomeDataService;
+import com.wangyameng.vo.admin.HomeDataVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,57 +35,42 @@ public class HomeDataServiceImpl implements HomeDataService {
 
     @Override
     public AjaxResult getHomeData() {
-        JSONObject homeData = new JSONObject();
+        HomeDataVo homeDataVo = new HomeDataVo();
         // 昨天0点0分0秒
         Date beginTime = getTimePoint(1, 0, 0, 0);
         // 昨天23点59分59秒
         Date endTime = getTimePoint(1, 23, 59, 59);
         Map<String, Object> yesterdaySData = getStatisticsData(beginTime, endTime);
-        // 昨日盲盒订单数
-        homeData.put("blind_box_order_counts", yesterdaySData.get("blindBoxOrderCounts"));
-        // 昨日盲盒销售额
-        homeData.put("blind_box_order_amount", yesterdaySData.get("blindBoxOrderAmount"));
-        // 昨日总订单数
-        homeData.put("all_order_counts", yesterdaySData.get("allOrderCounts"));
-        // 昨日盲盒订单销售额
-        homeData.put("all_order_amount", yesterdaySData.get("allOrderAmount"));
-        // 昨日新增用户数
-        homeData.put("users", yesterdaySData.get("users"));
+        homeDataVo.setBlind_box_order_counts(new BigDecimal(yesterdaySData.get("blindBoxOrderCounts").toString()));
+        homeDataVo.setBlind_box_order_amount(new BigDecimal(yesterdaySData.get("blindBoxOrderAmount").toString()));
+        homeDataVo.setAll_order_counts(new BigDecimal(yesterdaySData.get("allOrderCounts").toString()));
+        homeDataVo.setAll_order_amount(new BigDecimal(yesterdaySData.get("allOrderAmount").toString()));
+        homeDataVo.setUsers(new BigDecimal(yesterdaySData.get("users").toString()));
 
 
         beginTime = getTimePoint(31, 0, 0, 0);
         endTime = getTimePoint(1, 23, 59, 59);
         Map<String, Object> monthData = getStatisticsData(beginTime, endTime);
-        // 本月盲盒订单量
-        homeData.put("month_blind_box_order_counts", monthData.get("blindBoxOrderCounts"));
-        // 本月盲盒订单销售额
-        homeData.put("month_blind_box_order_amount", monthData.get("blindBoxOrderAmount"));
-        // 本月所有销售额
-        homeData.put("month_all_order_amount", monthData.get("allOrderAmount"));
-        // 本月所有订单量
-        homeData.put("month_all_order_counts", monthData.get("allOrderCounts"));
-        // 本月新增用户数
-        homeData.put("month_users", monthData.get("users"));
+        homeDataVo.setMonth_blind_box_order_counts(new BigDecimal(monthData.get("blindBoxOrderCounts").toString()));
+        homeDataVo.setMonth_blind_box_order_amount(new BigDecimal(monthData.get("blindBoxOrderAmount").toString()));
+        homeDataVo.setMonth_all_order_amount(new BigDecimal(monthData.get("allOrderAmount").toString()));
+        homeDataVo.setMonth_all_order_counts(new BigDecimal(monthData.get("allOrderCounts").toString()));
+        homeDataVo.setMonth_users(new BigDecimal(monthData.get("users").toString()));
 
         // 前天天0点0分0秒
         beginTime = getTimePoint(2, 0, 0, 0);
         endTime = getTimePoint(2, 23, 59, 59);
         Map<String, Object> beforeData = getStatisticsData(beginTime, endTime);
-        // 前天盲盒订单销售额
-        homeData.put("before_blind_box_order_amount", beforeData.get("blindBoxOrderAmount"));
-        // 前天所有销售额
-        homeData.put("change_amount", beforeData.get("blindBoxOrderAmount"));
-        // 前天昨天盲盒订单量变动
-        homeData.put("change_blind_box_order_counts", beforeData.get("allOrderAmount"));
-        // 前天昨天所有订单量变动
-        homeData.put("change_all_order_counts", beforeData.get("allOrderCounts"));
-        // 前天新增用户数
-        homeData.put("change_users", monthData.get("users"));
+        homeDataVo.setBefore_blind_box_order_amount(new BigDecimal(beforeData.get("blindBoxOrderAmount").toString()));
+        homeDataVo.setChange_amount(new BigDecimal(beforeData.get("blindBoxOrderAmount").toString()));
+        homeDataVo.setChange_blind_box_order_counts(new BigDecimal(beforeData.get("allOrderAmount").toString()));
+        homeDataVo.setChange_all_order_counts(new BigDecimal(beforeData.get("allOrderCounts").toString()));
+        homeDataVo.setChange_users(new BigDecimal(beforeData.get("users").toString()));
 
         // 15天数据曲线
-        JSONArray dates = new JSONArray();
-        JSONArray date_orders = new JSONArray();
-        JSONArray date_users = new JSONArray();
+        List<String> dates = new ArrayList<>();
+        List<Integer> date_orders = new ArrayList<>();
+        List<Integer> date_users = new ArrayList<>();
 
         beginTime = getTimePoint(16, 0, 0, 0);
         endTime = getTimePoint(1, 23, 59, 59);
@@ -119,12 +105,12 @@ public class HomeDataServiceImpl implements HomeDataService {
         }
 
         // 横坐标日期
-        homeData.put("dates", dates);
-        homeData.put("date_orders", date_orders);
-        homeData.put("date_users", date_users);
+        homeDataVo.setDates(dates);
+        homeDataVo.setDate_orders(date_orders);
+        homeDataVo.setDate_users(date_users);
 
 
-        return AjaxResult.dataReturn(0, "success", homeData);
+        return AjaxResult.dataReturn(0, "success", homeDataVo);
     }
 
 

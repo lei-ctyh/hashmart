@@ -6,9 +6,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/hashmart?serverTimezone=UTC
     username: root
-    password: 1234
+    password: 123456
 
-#  开启热部署
+  # 开启热部署
   devtools:
     restart:
       enabled: true
@@ -44,6 +44,3 @@ mybatis-plus:
     db-config:
       table-prefix: hashmart_
 
-springfox:
-  documentation:
-    enabled: true

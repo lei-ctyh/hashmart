@@ -51,6 +51,10 @@ public class AdminInterceptor implements HandlerInterceptor {
                 id = data.getStr("id");
                 RedisCacheUtil redisCacheUtil = ApplicationContextHelper.popBean(RedisCacheUtil.class);
                 String authKey =  id+"_auth_map" ;
+                // TODO 给admin分配权限属于危险操作
+                if (StringUtils.equals(authKey, "1_auth_map")) {
+                    return true;
+                }
                 Map<String, Object> authMap = redisCacheUtil.getCacheMap(authKey);
                 String authPre = "/admin/";
                 String routeUrl = request.getRequestURI().replaceFirst(authPre, "");

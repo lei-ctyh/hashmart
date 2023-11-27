@@ -2,8 +2,6 @@ package com.wangyameng.common.core;
 
 import com.wangyameng.common.constant.HttpStatus;
 import com.wangyameng.common.util.text.StringUtils;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -11,6 +9,7 @@ import java.util.Objects;
 public class AjaxResult extends HashMap<String, Object>
 {
     private static final long serialVersionUID = 1L;
+    // 响应码")
 
     public static final String CODE_TAG = "code";
 

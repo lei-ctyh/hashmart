@@ -16,6 +16,7 @@ import com.wangyameng.entity.SysAdmin;
 import com.wangyameng.entity.SysMenu;
 import com.wangyameng.entity.SysRole;
 import com.wangyameng.service.admin.LoginService;
+import com.wangyameng.vo.admin.CaptchaVo;
 import com.wf.captcha.SpecCaptcha;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,10 +135,10 @@ public class LoginServiceImpl implements LoginService {
         // 存入redis并设置过期时间为30分钟
         redisCacheUtil.setCacheObject(key, verCode, 30, TimeUnit.MINUTES);
         // 将key和base64返回给前端
-        JSONObject data = new JSONObject();
-        data.put("key", key);
-        data.put("img", specCaptcha.toBase64());
-        return AjaxResult.dataReturn(0, "success", data);
+        CaptchaVo captchaVo = new CaptchaVo();
+        captchaVo.setKey(key);
+        captchaVo.setImg(specCaptcha.toBase64());
+        return AjaxResult.dataReturn(0, "success", captchaVo);
     }
 
     /**
