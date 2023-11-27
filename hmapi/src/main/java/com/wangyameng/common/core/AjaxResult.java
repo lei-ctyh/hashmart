@@ -1,5 +1,6 @@
 package com.wangyameng.common.core;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.wangyameng.common.constant.HttpStatus;
 import com.wangyameng.common.util.text.StringUtils;
 
@@ -215,5 +216,10 @@ public class AjaxResult extends HashMap<String, Object>
 
     public static AjaxResult dataReturn(int code, String msg,Object data) {
         return new AjaxResult(code, msg,data);
+    }
+
+    public String toJson() {
+        JSONObject jsonObject = new JSONObject(this);
+        return jsonObject.toString();
     }
 }

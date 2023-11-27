@@ -22,6 +22,4 @@ public class HomeDataController {
     public AjaxResult index() throws Exception {
         return homeDataService.getHomeData();
     }
-
-
 }
