@@ -123,7 +123,6 @@
 					page: this.page,
 					limit: this.limit
 				}).then(res => {
-          debugger
 					if (res.code == 0) {
 						this.swiperList = res.data.slider
 						if (this.page < res.data.goods.last_page) {
