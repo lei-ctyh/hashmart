@@ -168,14 +168,17 @@ public class PubfuncUtil {
      * @return 替换后的链接
      */
     public static String replaceDomainName(String url, String domainName) {
-        String regex = "((http://)|(https://))?([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}(/)";
+        // (\w+):\/\/([^/:]+)(:\d*)?
+        // 转成java正则
+        // String regex = "(\\w+):\\/\\/(\\w+)(:\\d*)?";
+        String regex = "(\\w+):\\/\\/(\\w+)(:\\d*)?";
         return url.replaceAll(regex, domainName);
     }
 
     public static String replaceBecomeServerHost(String url) {
         // todo 后期需要处理成可替换的 String serverHost = getSdParam("server", "host");
         String serverHost = "http://localhost:8888";
-        return serverHost + replaceDomainName(url, "").replaceAll("HASHMART_URL", "");
+        return   replaceDomainName(url, "HASHMART_URL").replaceAll("HASHMART_URL", serverHost);
     }
 
     /**

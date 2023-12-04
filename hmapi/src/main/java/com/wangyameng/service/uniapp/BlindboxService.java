@@ -16,4 +16,6 @@ public interface BlindboxService {
      * @return 盲盒信息
      */
     AjaxResult getBlindboxDetail(String id);
+
+    AjaxResult getGoodsInfo(String id);
 }

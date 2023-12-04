@@ -35,6 +35,7 @@ export const request = (args) => {
 					login.appLogin()
 					// #endif
 				}
+				console.log(JSON.stringify(res))
 				resolve(res.data)
 
 			},

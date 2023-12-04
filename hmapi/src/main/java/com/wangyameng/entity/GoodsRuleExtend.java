@@ -2,6 +2,7 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class GoodsRuleExtend extends Model<GoodsRuleExtend> {
     // 图片
     private String image;
     // 唯一值
+    @TableField("`unique`")
     private String unique;
     // 展示价格
     private Double price;

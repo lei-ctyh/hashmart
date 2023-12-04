@@ -7,8 +7,10 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.dao.BlindboxDetailDao;
 import com.wangyameng.dao.BlindboxTagDao;
+import com.wangyameng.dao.GoodsDao;
 import com.wangyameng.entity.BlindboxDetail;
 import com.wangyameng.entity.BlindboxTag;
+import com.wangyameng.entity.Goods;
 import com.wangyameng.service.uniapp.BlindboxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ public class BlindboxServiceImpl implements BlindboxService {
     private BlindboxDetailDao blindboxDetailDao;
     @Autowired
     private BlindboxTagDao blindboxTagDao;
+    @Autowired
+    private GoodsDao goodsDao;
 
     @Override
     public AjaxResult getBlindboxDetail(String id) {
@@ -95,5 +99,26 @@ public class BlindboxServiceImpl implements BlindboxService {
                                                      .collect(Collectors.toList());
         rtnData.put("probability", probability);
         return AjaxResult.dataReturn(0, "success", rtnData);
+    }
+
+    @Override
+    public AjaxResult getGoodsInfo(String id) {
+        LambdaQueryWrapper<Goods> goodsQueryWrapper = new LambdaQueryWrapper<>();
+        goodsQueryWrapper.eq(Goods::getId, id);
+        goodsQueryWrapper.eq(Goods::getStatus, 1);
+        goodsQueryWrapper.eq(Goods::getGoodsType, 2);
+        goodsQueryWrapper.eq(Goods::getDeleteFlag, 1);
+        Goods goods = goodsDao.selectOne(goodsQueryWrapper);
+        if (goods!= null) {
+            JSONObject rtnData = new JSONObject();
+            rtnData.put("id", goods.getId());
+            rtnData.put("name", goods.getName());
+            rtnData.put("subTitle", goods.getSubTitle());
+            rtnData.put("image", PubfuncUtil.replaceBecomeServerHost(goods.getImage()));
+            rtnData.put("price", goods.getPrice());
+            rtnData.put("content", PubfuncUtil.replaceBecomeServerHost(goods.getContent()));
+            return AjaxResult.dataReturn(0, "success", rtnData);
+        }
+        return AjaxResult.dataReturn(-1, "商品信息错误");
     }
 }

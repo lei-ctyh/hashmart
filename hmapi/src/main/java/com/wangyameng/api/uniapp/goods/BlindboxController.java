@@ -25,4 +25,9 @@ public class BlindboxController {
         return blindboxService.getBlindboxDetail(id);
     }
 
+    @GetMapping("/uniapp/goods/blindbox/goodsInfo")
+    public AjaxResult getGoodsInfo(@RequestParam String id){
+        return blindboxService.getGoodsInfo(id);
+    }
+
 }

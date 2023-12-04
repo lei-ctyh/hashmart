@@ -1,15 +1,21 @@
 package com.wangyameng.service.uniapp.impl;
 
+import cn.hutool.core.text.UnicodeUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
+import com.wangyameng.common.util.text.StringUtils;
 import com.wangyameng.dao.GoodsCateDao;
 import com.wangyameng.dao.GoodsDao;
+import com.wangyameng.dao.GoodsRuleDao;
+import com.wangyameng.dao.GoodsRuleExtendDao;
 import com.wangyameng.entity.Goods;
 import com.wangyameng.entity.GoodsCate;
+import com.wangyameng.entity.GoodsRule;
+import com.wangyameng.entity.GoodsRuleExtend;
 import com.wangyameng.service.uniapp.ActivityService;
 import com.wangyameng.service.uniapp.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +39,10 @@ public class ShopServiceImpl implements ShopService {
     private ActivityService activityService;
     @Autowired
     private GoodsDao goodsDao;
+    @Autowired
+    private GoodsRuleDao goodsRuleDao;
+    @Autowired
+    private GoodsRuleExtendDao goodsRuleExtendDao;
 
     @Override
     public AjaxResult getCateList() {
@@ -107,7 +117,58 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public AjaxResult getGoodsInfo(int id) {
-        return null;
+        JSONObject rtnData = new JSONObject();
+
+        Goods goods = goodsDao.selectById(id);
+        // id,type,name,sub_title,image,stock,price,delivery_fee,integral_price,sales,content
+        if (goods != null) {
+            rtnData.put("id", goods.getId());
+            rtnData.put("type", goods.getType());
+            rtnData.put("name", goods.getName());
+            rtnData.put("sub_title", goods.getSubTitle());
+            rtnData.put("image", PubfuncUtil.replaceBecomeServerHost(goods.getImage()));
+            rtnData.put("stock", goods.getStock());
+            rtnData.put("price", goods.getPrice());
+            rtnData.put("delivery_fee", goods.getDeliveryFee());
+            rtnData.put("integral_price", goods.getIntegralPrice());
+            rtnData.put("sales", goods.getSales());
+            rtnData.put("content", PubfuncUtil.replaceBecomeServerHost(goods.getContent()));
+            LambdaQueryWrapper<GoodsRule> ruleQueryWrapper = new LambdaQueryWrapper<>();
+            ruleQueryWrapper.eq(GoodsRule::getGoodsId, id);
+            GoodsRule goodsRule = goodsRuleDao.selectOne(ruleQueryWrapper);
+            JSONObject rule = new JSONObject();
+            if (goodsRule != null) {
+                rule.put("rule", UnicodeUtil.toString(StringUtils.defaultString(goodsRule.getRule(), "")));
+                rtnData.put("rule", rule);
+            } else {
+                rtnData.put("rule", "");
+            }
+
+            if (goods.getType() == 2) {
+                LambdaQueryWrapper<GoodsRuleExtend> ruleExtendQueryWrapper = new LambdaQueryWrapper<>();
+                ruleExtendQueryWrapper.eq(GoodsRuleExtend::getGoodsId, id);
+                List<GoodsRuleExtend> goodsRuleExtends = goodsRuleExtendDao.selectList(ruleExtendQueryWrapper);
+                JSONArray rtnRuleExtend = new JSONArray();
+                for (GoodsRuleExtend goodsRuleExtend : goodsRuleExtends) {
+                    JSONObject ruleExtend = new JSONObject();
+                    ruleExtend.put("id", goodsRuleExtend.getId());
+                    ruleExtend.put("sku", goodsRuleExtend.getSku());
+                    ruleExtend.put("stock", goodsRuleExtend.getStock());
+                    ruleExtend.put("sales", goodsRuleExtend.getSales());
+                    ruleExtend.put("image", PubfuncUtil.replaceBecomeServerHost(goodsRuleExtend.getImage()));
+                    ruleExtend.put("price", goodsRuleExtend.getPrice());
+                    ruleExtend.put("recovery_price", goodsRuleExtend.getRecoveryPrice());
+                    ruleExtend.put("integral_price", goodsRuleExtend.getIntegralPrice());
+                    rtnRuleExtend.add(ruleExtend);
+                }
+                rtnData.put("ruleExtend", rtnRuleExtend);
+
+            }
+            return AjaxResult.dataReturn(0, "success", rtnData);
+        }
+
+        // {"code":0,"data":{"id":36,"type":1,"name":"111","sub_title":"","image":"http://leiaimeng.mynatapp.cc/storage/local/20230331/27407a64b20a489320bea1790810d7fb.png","stock":-1,"price":"0.00","delivery_fee":"0.00","integral_price":"0.00","sales":0,"content":"","ruleExtend":[],"rule":null},"msg":"success"}
+        return AjaxResult.dataReturn(-1, "商品信息异常");
     }
 
 
