@@ -7,17 +7,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.common.util.text.StringUtils;
-import com.wangyameng.dao.ActivitySliderDao;
 import com.wangyameng.dao.BlindboxDao;
 import com.wangyameng.dao.BlindboxDetailDao;
-import com.wangyameng.entity.ActivitySlider;
 import com.wangyameng.entity.Blindbox;
 import com.wangyameng.entity.BlindboxDetail;
+import com.wangyameng.service.uniapp.ActivityService;
 import com.wangyameng.service.uniapp.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.wangyameng.service.uniapp.ActivityService.SLIDER_TYPE_INDEX;
 
 /**
  * @author zhanglei
@@ -29,49 +31,25 @@ import java.util.List;
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired
-    private ActivitySliderDao activitySliderDao;
-    @Autowired
     private BlindboxDao blindboxDao;
     @Autowired
     private BlindboxDetailDao blindboxDetailDao;
+    @Autowired
+    private ActivityService activityService;
 
     @Override
     public AjaxResult getHomeData(int page, int limit) {
         // 检查站点是否正则维护
-        String open = PubfuncUtil.getSdParam("sys_base", "web_open");
-        String openVal = "1";
-        if (!StringUtils.equals(openVal, open)) {
-            return AjaxResult.dataReturn(404, "站点正在维护");
+        if (!PubfuncUtil.checkOpen()) {
+            return AjaxResult.dataReturn(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase());
         }
 
         JSONObject rtnData = new JSONObject();
         // 幻灯数据
-        rtnData.set("slider", getSliderData());
+        rtnData.set("slider", activityService.getSliderData(SLIDER_TYPE_INDEX));
         // 商品列表
         rtnData.set("goods", getGoodsData(page, limit));
         return AjaxResult.dataReturn(0,"success",rtnData);
-    }
-
-    /**
-     * 获取幻灯片数据
-     * @return 幻灯片数据
-     */
-    private JSONArray getSliderData() {
-        LambdaQueryWrapper<ActivitySlider> sliderQueryWrapper = new LambdaQueryWrapper<>();
-        sliderQueryWrapper.eq(ActivitySlider::getStatus, 1).eq(ActivitySlider::getType, 1);
-        List<ActivitySlider> activitySliders = activitySliderDao.selectList(sliderQueryWrapper);
-        JSONArray sliderList = new JSONArray();
-        for (ActivitySlider slider : activitySliders) {
-            JSONObject sliderJson = new JSONObject();
-            sliderJson.set("id", slider.getId());
-            sliderJson.set("title", slider.getTitle());
-            sliderJson.set("blindbox_id", slider.getBlindboxId());
-            sliderJson.set("goods_id", slider.getGoodsId());
-            sliderJson.set("pic", PubfuncUtil.replaceBecomeServerHost(slider.getPic()));
-            sliderJson.set("other", slider.getOther());
-            sliderList.add(sliderJson);
-        }
-        return sliderList;
     }
 
     /**

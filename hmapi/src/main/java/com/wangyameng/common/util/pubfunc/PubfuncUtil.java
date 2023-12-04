@@ -6,7 +6,6 @@ import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.ApplicationContextHelper;
 import com.wangyameng.common.util.text.StringUtils;
 import com.wangyameng.dao.SysSettingDao;
@@ -119,10 +118,6 @@ public class PubfuncUtil {
         return tree;
     }
 
-    public static AjaxResult checkOpen() {
-
-        return null;
-    }
 
     /**
      * 日期格式化
@@ -181,6 +176,16 @@ public class PubfuncUtil {
         // todo 后期需要处理成可替换的 String serverHost = getSdParam("server", "host");
         String serverHost = "http://localhost:8888";
         return serverHost + replaceDomainName(url, "").replaceAll("HASHMART_URL", "");
+    }
+
+    /**
+     * 检查是否客户端开启
+     * @return true 开启 false 关闭
+     */
+    public static boolean checkOpen() {
+        String open = PubfuncUtil.getSdParam("sys_base", "web_open");
+        String openVal = "1";
+        return StringUtils.equals(openVal, open);
     }
 
     public static void main(String[] args) {
