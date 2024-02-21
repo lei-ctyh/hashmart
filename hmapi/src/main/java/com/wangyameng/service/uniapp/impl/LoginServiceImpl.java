@@ -16,6 +16,7 @@ import com.wangyameng.service.uniapp.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
 
         String appId = PubfuncUtil.getSdParam("miniapp", "miniapp_app_id");
         String appSecret = PubfuncUtil.getSdParam("miniapp", "miniapp_app_secret");
-        String token = "getToken(appId, appSecret)";
+        String token = getToken(appId, appSecret);
         String phoneNumber = getPhoneNumber(phone_code, token);
 
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
@@ -43,6 +44,17 @@ public class LoginServiceImpl implements LoginService {
         User userInfo = userDao.selectOne(queryWrapper);
         // 用户信息为空需要注册
         if (userInfo == null) {
+            userInfo = new User();
+            userInfo.setNickname("微信用户");
+            userInfo.setPhone(phoneNumber);
+            userInfo.setAvatar(PubfuncUtil.getRandAvatar());
+
+            userInfo.setOpenid(getOpenId(code));
+            userInfo.setPassword(PubfuncUtil.makePassword("123456", ""));
+            userInfo.setSourceType(1);
+            userInfo.setCreateTime(new Date());
+            userDao.insert(userInfo);
+            userInfo= userDao.selectOne(queryWrapper);
 
         }else {
             if (userInfo.getStatus() == 2) {
@@ -71,17 +83,24 @@ public class LoginServiceImpl implements LoginService {
      * @return 手机号码
      */
     private String getPhoneNumber(String phoneCode, String token) {
-        return "15039653170";
-        /* String url = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=" + token ;
+        String url = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=" + token ;
         JSONObject reqMsg = new JSONObject();
         reqMsg.put("code", phoneCode);
-        String respMsg = HttpUtil.post(url, reqMsg);
+        String respMsg = HttpUtil.post(url, reqMsg.toString());
         JSONObject respJson = JSONObject.parseObject(respMsg);
         if (respJson.get("errcode") != null && StringUtils.equals("0", respJson.get("errcode").toString())) {
             return respJson.getJSONObject("phone_info").getString("phoneNumber");
         }
-        return ""; */
+        return "";
     }
+
+    /**
+     * 获取token
+     * <a href="https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/mp-access-token/getAccessToken.html">微信小程序获取接口调用凭据</a>
+     * @param appId 微信小程序的appID
+     * @param appSecret 微信小程序的appSecret
+     * @return 该token的有效期为7200秒, Redis中设置的失效事件为7000秒
+     */
 
     private String getToken(String appId, String appSecret) {
 
@@ -94,11 +113,11 @@ public class LoginServiceImpl implements LoginService {
             }
         }
 
-        String getTokenUrl = "GET https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRE}";
+        String getTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRE}";
         String respMsg = HttpUtil.get(getTokenUrl.replace("{APPID}", appId).replace("{APPSECRE}", appSecret));
         JSONObject respJson = JSONObject.parseObject(respMsg);
         if (respJson.get("access_token") != null) {
-            redisCacheUtil.setCacheObject("token", respJson.get("access_token"), 7200, TimeUnit.SECONDS);
+            redisCacheUtil.setCacheObject("token", respJson.get("access_token"), 7000, TimeUnit.SECONDS);
             return respJson.get("access_token").toString();
         }
         return "";
@@ -106,11 +125,20 @@ public class LoginServiceImpl implements LoginService {
 
     /**
      * 获取openid
+     * <a href="https://developers.weixin.qq.com/minigame/dev/api-backend/open-api/login/auth.code2Session.html">获取OpenId的相关文档</a>
      * @param code code
      * @return openid
      */
     private String  getOpenId(String code) {
-        return "oOOkp41Ky_7HnstylMBmSFJ8v3W8";
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid={APPID}&secret={APPSECRET}&js_code={CODE}&grant_type=authorization_code";
+        String appId = PubfuncUtil.getSdParam("miniapp", "miniapp_app_id");
+        String appSecret = PubfuncUtil.getSdParam("miniapp", "miniapp_app_secret");
+        String respMsg = HttpUtil.get(url.replace("{APPID}", appId).replace("{APPSECRET}", appSecret).replace("{CODE}", code));
+        JSONObject respJson = JSONObject.parseObject(respMsg);
+        if (respJson.get("openid") != null) {
+            return respJson.get("openid").toString();
+        }
+        return "";
     }
 
     private AjaxResult makeReturnData(User userInfo) {
@@ -127,4 +155,6 @@ public class LoginServiceImpl implements LoginService {
         respJson.put("userInfo", map);
         return AjaxResult.dataReturn(0, "登录成功", respJson);
     }
+
+
 }

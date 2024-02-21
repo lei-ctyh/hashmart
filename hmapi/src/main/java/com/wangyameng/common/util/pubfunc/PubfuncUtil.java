@@ -14,6 +14,7 @@ import com.wangyameng.entity.SysSetting;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author zhanglei
@@ -177,8 +178,7 @@ public class PubfuncUtil {
 
     public static String replaceBecomeServerHost(String url) {
         // todo 后期需要处理成可替换的 String serverHost = getSdParam("server", "host");
-        String serverHost = "http://localhost:8888";
-        return   replaceDomainName(url, "HASHMART_URL").replaceAll("HASHMART_URL", serverHost);
+        return   replaceDomainName(url, "HASHMART_URL").replaceAll("HASHMART_URL", getPublicIPAddress());
     }
 
     /**
@@ -189,6 +189,33 @@ public class PubfuncUtil {
         String open = PubfuncUtil.getSdParam("sys_base", "web_open");
         String openVal = "1";
         return StringUtils.equals(openVal, open);
+    }
+
+    /**
+     * 获取私有IP地址
+     * @return 服务的私有IP地址
+     */
+    public static String getPrivateIPAddress() {
+        return "http://localhost:8888";
+    }
+
+    /**
+     * 获取公网IP地址
+     * @return 服务的公网IP地址
+     */
+    public static String getPublicIPAddress() {
+        return getPrivateIPAddress();
+    }
+
+
+    /**
+     * 获取随机头像
+     * @return 随机头像地址
+     */
+    public static String getRandAvatar() {
+        int[] arr = {1, 2, 3};
+        int num = arr[new Random().nextInt(arr.length)];
+        return "HASHMART_URL" + "/images/avatar-" + num + ".png";
     }
 
     public static void main(String[] args) {

@@ -20,7 +20,7 @@ public class LoginController {
     @Resource(name = "uniappLoginService")
     LoginService loginService ;
     @PostMapping("uniapp/user/login/loginByWechat")
-    public AjaxResult loginByWechat(String phone_code, String code) {
+    public AjaxResult loginByWechat(String code, String phone_code) {
         return loginService.doLoginByWechat(code, phone_code);
     }
 }
