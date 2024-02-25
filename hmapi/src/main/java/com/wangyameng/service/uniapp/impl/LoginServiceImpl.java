@@ -91,7 +91,7 @@ public class LoginServiceImpl implements LoginService {
         if (respJson.get("errcode") != null && StringUtils.equals("0", respJson.get("errcode").toString())) {
             return respJson.getJSONObject("phone_info").getString("phoneNumber");
         }
-        return "";
+        throw new RuntimeException("获取手机号失败");
     }
 
     /**
@@ -120,7 +120,7 @@ public class LoginServiceImpl implements LoginService {
             redisCacheUtil.setCacheObject("token", respJson.get("access_token"), 7000, TimeUnit.SECONDS);
             return respJson.get("access_token").toString();
         }
-        return "";
+       throw new RuntimeException("获取token失败");
     }
 
     /**

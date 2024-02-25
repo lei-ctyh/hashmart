@@ -27,6 +27,11 @@ public class UniappInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         return true;
         /* // 通过所有OPTION请求
+
+        // 检查站点是否正则维护
+        if (!PubfuncUtil.checkOpen()) {
+            return AjaxResult.dataReturn(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase());
+        }
         if(request.getMethod().equals(HttpMethod.OPTIONS.toString())){
             return true;
         } else {

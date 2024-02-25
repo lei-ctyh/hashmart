@@ -1,8 +1,11 @@
 package com.wangyameng.api.uniapp.user;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.wangyameng.common.core.AjaxResult;
+import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.service.uniapp.LoginService;
 import com.wangyameng.service.uniapp.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +28,10 @@ public class UserController {
     @PostMapping("uniapp/user/getInfo")
     public AjaxResult getUserInfo(@RequestHeader("authorization") String token) {
         return userService.getUserInfo(token);
+    }
+
+    @PostMapping("uniapp/user/setInfo")
+    public AjaxResult setUserInfo(String avatar, String nickname, String phone, @RequestHeader("authorization") String token) {
+        return userService.setUserInfo(avatar, nickname, phone, token);
     }
 }

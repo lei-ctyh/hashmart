@@ -210,13 +210,31 @@ public class PubfuncUtil {
 
     /**
      * 获取随机头像
+     * @param flag 0: 获取随机头像; 3: 获取全部头像列表
+     */
+    public static String getRandAvatar(int flag) {
+        int[] arr = {1, 2, 3};
+        if (flag == 3) {
+            JSONArray array = new JSONArray();
+            for (int i = 1; i <= arr.length; i++) {
+                array.add(PubfuncUtil.replaceBecomeServerHost("HASHMART_URL" + "/images/avatar-" + i + ".png"));
+            }
+            return array.toString();
+        }else {
+            int num = arr[new Random().nextInt(arr.length)];
+            return PubfuncUtil.replaceBecomeServerHost("HASHMART_URL" + "/images/avatar-" + num + ".png");
+        }
+
+    }
+
+    /**
+     * 获取随机头像
      * @return 随机头像地址
      */
     public static String getRandAvatar() {
-        int[] arr = {1, 2, 3};
-        int num = arr[new Random().nextInt(arr.length)];
-        return "HASHMART_URL" + "/images/avatar-" + num + ".png";
+        return getRandAvatar(0);
     }
+
 
     public static void main(String[] args) {
         setJWT(null);
