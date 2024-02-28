@@ -11,7 +11,7 @@ import com.wangyameng.dao.SysAdminDao;
 import com.wangyameng.dao.SysAdminLogDao;
 import com.wangyameng.dao.SysMenuDao;
 import com.wangyameng.dao.SysRoleDao;
-import com.wangyameng.dto.LoginDto;
+import com.wangyameng.dto.LoginDTO;
 import com.wangyameng.entity.SysAdmin;
 import com.wangyameng.entity.SysMenu;
 import com.wangyameng.entity.SysRole;
@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
     SysAdminLogDao sysAdminLogDao;
 
     @Override
-    public AjaxResult doLogin(LoginDto loginDto) {
+    public AjaxResult doLogin(LoginDTO loginDto) {
         String username = loginDto.getUsername();
         String password = loginDto.getPassword();
         String captcha = loginDto.getCaptcha();

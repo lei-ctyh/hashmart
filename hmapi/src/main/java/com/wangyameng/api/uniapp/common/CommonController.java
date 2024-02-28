@@ -3,10 +3,7 @@ package com.wangyameng.api.uniapp.common;
 import com.alibaba.fastjson2.JSONArray;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
-import com.wangyameng.dao.UserAgreeDao;
-import com.wangyameng.dao.UserDao;
-import com.wangyameng.entity.UserAgree;
-import com.wangyameng.service.uniapp.impl.CommonService;
+import com.wangyameng.service.uniapp.CommonService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

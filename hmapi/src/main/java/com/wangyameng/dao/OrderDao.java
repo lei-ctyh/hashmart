@@ -1,6 +1,7 @@
 package com.wangyameng.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.Order;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * @since 2023-10-18 22:32:31
  */
 @Repository
-public interface OrderDao extends BaseMapper<Order> {
+public interface OrderDao extends MPJBaseMapper<Order> {
 
 }
 

@@ -10,6 +10,12 @@ import com.wangyameng.common.core.AjaxResult;
  * @createTime 2024-02-21 14:59:00
  */
 public interface UserService {
+
+    /**
+     * 获取用户信息
+     * @param token
+     * @return
+     */
     AjaxResult getUserInfo(String token);
 
     /**
@@ -20,4 +26,16 @@ public interface UserService {
      * @return 设置用户信息结果
      */
     AjaxResult setUserInfo(String avatar, String nickname, String phone, String token);
+
+
+    /**
+     * 开盒记录
+     * @param token
+     * @param page
+     * @param limit
+     * @return 开盒记录信息
+     */
+    AjaxResult orderRecordLog(String token, int page, int limit);
+
+    AjaxResult orderList(String token, int page, int limit, int status);
 }

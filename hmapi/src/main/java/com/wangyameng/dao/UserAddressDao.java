@@ -1,6 +1,7 @@
 package com.wangyameng.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.UserAddress;
 
 /**
@@ -9,7 +10,7 @@ import com.wangyameng.entity.UserAddress;
  * @author wangyameng
  * @since 2023-10-18 22:32:32
  */
-public interface UserAddressDao extends BaseMapper<UserAddress> {
+public interface UserAddressDao extends MPJBaseMapper<UserAddress> {
 
 }
 

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
  * @Description 后台登录请求体
  * @createTime 2023-11-01 17:17:00
  */
-public class LoginDto {
+public class LoginDTO {
     // 用户名", required = true, example = "admin
     @NotBlank(message = "用户名不得为空")
     private String username;

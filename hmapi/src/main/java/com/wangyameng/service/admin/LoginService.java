@@ -1,9 +1,6 @@
 package com.wangyameng.service.admin;
-
-import com.alibaba.fastjson2.JSONObject;
 import com.wangyameng.common.core.AjaxResult;
-import com.wangyameng.dto.LoginDto;
-import com.wangyameng.entity.SysAdmin;
+import com.wangyameng.dto.LoginDTO;
 
 /**
  * @author zhanglei
@@ -19,7 +16,7 @@ public interface LoginService {
      * @return
      * @throws Exception
      */
-    AjaxResult doLogin(LoginDto loginDto) throws  Exception;
+    AjaxResult doLogin(LoginDTO loginDto) throws  Exception;
 
     /**
      * 生成验证码相关信息

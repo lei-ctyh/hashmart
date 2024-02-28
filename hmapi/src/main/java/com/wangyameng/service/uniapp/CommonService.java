@@ -1,4 +1,4 @@
-package com.wangyameng.service.uniapp.impl;
+package com.wangyameng.service.uniapp;
 
 import com.wangyameng.common.core.AjaxResult;
 

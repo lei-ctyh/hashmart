@@ -1,7 +1,7 @@
 package com.wangyameng.api.admin.user;
 
 import com.wangyameng.common.core.AjaxResult;
-import com.wangyameng.dto.LoginDto;
+import com.wangyameng.dto.LoginDTO;
 import com.wangyameng.service.admin.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +24,7 @@ public class LoginController {
 
 
     @PostMapping("admin/user.login/login")
-    public AjaxResult login(@RequestBody @Validated LoginDto loginDto) throws Exception {
+    public AjaxResult login(@RequestBody @Validated LoginDTO loginDto) throws Exception {
         return loginService.doLogin(loginDto);
     }
 

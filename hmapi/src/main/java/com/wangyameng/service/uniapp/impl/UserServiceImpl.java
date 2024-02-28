@@ -6,14 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.dao.OrderDao;
+import com.wangyameng.dao.OrderRecordDao;
 import com.wangyameng.dao.UserDao;
 import com.wangyameng.entity.Order;
+import com.wangyameng.entity.OrderRecord;
 import com.wangyameng.entity.User;
 import com.wangyameng.service.uniapp.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 
@@ -30,6 +30,9 @@ public class UserServiceImpl implements UserService {
     UserDao userDao;
     @Autowired
     OrderDao orderDao;
+
+    @Autowired
+    OrderRecordDao orderRecordDao;
 
     @Override
     public AjaxResult getUserInfo(String token) {
@@ -87,5 +90,24 @@ public class UserServiceImpl implements UserService {
         user.setUpdateTime(new Date());
         userDao.updateById(user);
         return AjaxResult.dataReturn(0,"操作成功");
+    }
+
+    @Override
+    public AjaxResult orderRecordLog(String token, int page, int limit) {
+        JWT jwt = PubfuncUtil.getJWT(token.substring(7));
+        Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
+
+
+
+
+        return null;
+    }
+
+    @Override
+    public AjaxResult orderList(String token, int page, int limit, int status) {
+        JWT jwt = PubfuncUtil.getJWT(token.substring(7));
+        Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
+
+        return null;
     }
 }

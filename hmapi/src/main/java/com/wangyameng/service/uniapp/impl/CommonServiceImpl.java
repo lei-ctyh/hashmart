@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dao.UserAgreeDao;
 import com.wangyameng.entity.UserAgree;
+import com.wangyameng.service.uniapp.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @date 2024/2/25 23:24
  */
 @Service("uniappCommonService")
-public class CommonServiceImpl implements CommonService{
+public class CommonServiceImpl implements CommonService {
     @Autowired
     UserAgreeDao userAgreeDao;
     @Override

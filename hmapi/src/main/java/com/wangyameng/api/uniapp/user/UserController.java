@@ -34,4 +34,20 @@ public class UserController {
     public AjaxResult setUserInfo(String avatar, String nickname, String phone, @RequestHeader("authorization") String token) {
         return userService.setUserInfo(avatar, nickname, phone, token);
     }
+
+    @GetMapping("uniapp/user/orderRecordLog")
+    public AjaxResult orderRecordLog(@RequestHeader("authorization") String token, int page, int limit) {
+
+        return userService.orderRecordLog(token, page, limit);
+    }
+
+    @GetMapping("uniapp/order/list")
+    public AjaxResult orderRecordLog(@RequestHeader("authorization") String token, int page, int limit, int status) {
+
+        return userService.orderList(token, page, limit, status);
+    }
+
+
+
+
 }
