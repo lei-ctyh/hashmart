@@ -1,21 +1,23 @@
 package com.wangyameng.service.uniapp.impl;
 
 import cn.hutool.jwt.JWT;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.leheyue.wrapper.MPJLambdaWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
-import com.wangyameng.dao.OrderDao;
-import com.wangyameng.dao.OrderRecordDao;
-import com.wangyameng.dao.UserDao;
-import com.wangyameng.entity.Order;
-import com.wangyameng.entity.OrderRecord;
-import com.wangyameng.entity.User;
+import com.wangyameng.dao.*;
+import com.wangyameng.dto.OrderRecordDTO;
+import com.wangyameng.entity.*;
 import com.wangyameng.service.uniapp.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zhanglei
@@ -32,7 +34,12 @@ public class UserServiceImpl implements UserService {
     OrderDao orderDao;
 
     @Autowired
+    OrderRecordDetailDao orderRecordDetailDao;
+
+    @Autowired
     OrderRecordDao orderRecordDao;
+    @Autowired
+    BlindboxDao blindboxDao;
 
     @Override
     public AjaxResult getUserInfo(String token) {
@@ -97,10 +104,19 @@ public class UserServiceImpl implements UserService {
         JWT jwt = PubfuncUtil.getJWT(token.substring(7));
         Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
 
+        MPJLambdaWrapper<OrderRecord> wrapper = new MPJLambdaWrapper<OrderRecord>()
+                .selectAll(OrderRecord.class)
+                .selectAll(OrderRecordDetail.class)
+                .selectAll(Blindbox.class)
+                .leftJoin(OrderRecordDetail.class, OrderRecordDetail::getOrderRecordId, OrderRecord::getId)
+                .leftJoin(Blindbox.class, Blindbox::getId, OrderRecord::getBlindboxId);
+
+        wrapper.eq(OrderRecord::getUserId, id)
+                .orderByDesc(OrderRecord::getId);
 
 
-
-        return null;
+        Page<OrderRecordDTO> orderRecordDTOPage = orderRecordDao.selectJoinPage(new Page<OrderRecordDTO>(page, limit).setSearchCount(false), OrderRecordDTO.class, wrapper);
+        return AjaxResult.dataReturn(0, "获取用户订单成功", PubfuncUtil.paginate(orderRecordDTOPage));
     }
 
     @Override

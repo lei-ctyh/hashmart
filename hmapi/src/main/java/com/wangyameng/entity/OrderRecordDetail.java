@@ -2,6 +2,7 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -50,6 +51,7 @@ public class OrderRecordDetail extends Model<OrderRecordDetail> {
     private Integer ratio;
     // 状态：1 盒子中 2 已兑换 3 已提货
     private Integer status;
+    @TableField("`RANGE`")
     // 抽中范围
     private String range;
     // 下单时间

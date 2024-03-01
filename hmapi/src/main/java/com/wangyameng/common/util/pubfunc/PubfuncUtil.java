@@ -6,15 +6,14 @@ import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangyameng.common.core.ApplicationContextHelper;
 import com.wangyameng.common.util.text.StringUtils;
 import com.wangyameng.dao.SysSettingDao;
 import com.wangyameng.entity.SysSetting;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * @author zhanglei
@@ -241,4 +240,43 @@ public class PubfuncUtil {
     }
 
 
+    public static <T> JSONArray paginate(Page<T> ipage) {
+        List<T> records = ipage.getRecords();
+
+        JSONArray jsonArray = new JSONArray();
+        for (T record : records) {
+            JSONObject json = new JSONObject();
+            // 获取字段名
+            Field[] fields = record.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                try {
+                    String fieldName = underscoreName(field.getName());
+                    json.put(fieldName, field.get(record));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            jsonArray.add(json);
+        }
+        return jsonArray;
+    }
+
+    public static String underscoreName(String name) {
+        StringBuilder result = new StringBuilder();
+        if (name != null && name.length() > 0) {
+            result.append(name.substring(0, 1).toLowerCase());
+            for (int i = 1; i < name.length(); i++) {
+                String s = name.substring(i, i + 1);
+                // 在大写字母前添加下划线
+                if (!StringUtils.isAllLowerCase(s) && Character.isUpperCase(s.charAt(0))) {
+                    result.append("_").append(s.toLowerCase());
+                } else {
+                    result.append(s);
+                }
+            }
+        }
+        return result.toString();
+    }
 }

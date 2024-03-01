@@ -1,6 +1,7 @@
 package com.wangyameng.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.Blindbox;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * @since 2023-10-18 22:32:31
  */
 @Repository
-public interface BlindboxDao extends BaseMapper<Blindbox> {
+public interface BlindboxDao extends MPJBaseMapper<Blindbox> {
 
 }
 

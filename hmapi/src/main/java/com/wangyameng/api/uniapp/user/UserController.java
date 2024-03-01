@@ -37,7 +37,6 @@ public class UserController {
 
     @GetMapping("uniapp/user/orderRecordLog")
     public AjaxResult orderRecordLog(@RequestHeader("authorization") String token, int page, int limit) {
-
         return userService.orderRecordLog(token, page, limit);
     }
 
