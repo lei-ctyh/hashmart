@@ -1,7 +1,7 @@
 package com.wangyameng.service.uniapp.impl;
 
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangyameng.common.core.AjaxResult;
@@ -14,7 +14,6 @@ import com.wangyameng.entity.BlindboxDetail;
 import com.wangyameng.service.uniapp.ActivityService;
 import com.wangyameng.service.uniapp.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,16 +38,12 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public AjaxResult getHomeData(int page, int limit) {
-        // 检查站点是否正则维护
-        if (!PubfuncUtil.checkOpen()) {
-            return AjaxResult.dataReturn(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase());
-        }
 
         JSONObject rtnData = new JSONObject();
         // 幻灯数据
-        rtnData.set("slider", activityService.getSliderData(SLIDER_TYPE_INDEX));
+        rtnData.put("slider", activityService.getSliderData(SLIDER_TYPE_INDEX));
         // 商品列表
-        rtnData.set("goods", getGoodsData(page, limit));
+        rtnData.put("goods", getGoodsData(page, limit));
         return AjaxResult.dataReturn(0,"success",rtnData);
     }
 
@@ -71,14 +66,14 @@ public class HomeServiceImpl implements HomeService {
         JSONArray data = new JSONArray();
         for (Blindbox blindbox : blindboxes) {
             JSONObject blindboxJson = new JSONObject();
-            blindboxJson.set("id", blindbox.getId());
-            blindboxJson.set("name", blindbox.getName());
-            blindboxJson.set("desc", blindbox.getDesc());
-            blindboxJson.set("pic", PubfuncUtil.replaceBecomeServerHost(blindbox.getPic()));
-            blindboxJson.set("sales", blindbox.getSales());
-            blindboxJson.set("hot_tag", blindbox.getHotTag());
-            blindboxJson.set("recommend_tag", blindbox.getRecommendTag());
-            blindboxJson.set("price", blindbox.getPrice());
+            blindboxJson.put("id", blindbox.getId());
+            blindboxJson.put("name", blindbox.getName());
+            blindboxJson.put("desc", blindbox.getDesc());
+            blindboxJson.put("pic", PubfuncUtil.replaceBecomeServerHost(blindbox.getPic()));
+            blindboxJson.put("sales", blindbox.getSales());
+            blindboxJson.put("hot_tag", blindbox.getHotTag());
+            blindboxJson.put("recommend_tag", blindbox.getRecommendTag());
+            blindboxJson.put("price", blindbox.getPrice());
             // 每个盲盒都要有价格范围, 和盲盒下物品的图片
             JSONArray detail = new JSONArray();
             JSONObject priceRange = new JSONObject();
@@ -109,7 +104,7 @@ public class HomeServiceImpl implements HomeService {
 
                     if (blindboxDetail.getGoodsId()!= null) {
                         JSONObject detailJson = new JSONObject();
-                        detailJson.set("goods_image", PubfuncUtil.replaceBecomeServerHost(blindboxDetail.getGoodsImage()));
+                        detailJson.put("goods_image", PubfuncUtil.replaceBecomeServerHost(blindboxDetail.getGoodsImage()));
                         detail.add(detailJson);
                     }
 
@@ -121,21 +116,21 @@ public class HomeServiceImpl implements HomeService {
                 if (StringUtils.isBlank(maxPrice)) {
                     maxPrice = "99999999";
                 }
-                priceRange.set("min_price", minPrice);
-                priceRange.set("max_price", maxPrice);
+                priceRange.put("min_price", minPrice);
+                priceRange.put("max_price", maxPrice);
 
             }
-            blindboxJson.set("price_range", priceRange);
-            blindboxJson.set("detail", detail);
+            blindboxJson.put("price_range", priceRange);
+            blindboxJson.put("detail", detail);
 
             data.add(blindboxJson);
         }
 
-        rtnJson.set("total", ipage.getTotal());
-        rtnJson.set("per_page", ipage.getSize());
-        rtnJson.set("current_page", ipage.getCurrent());
-        rtnJson.set("last_page", ipage.getPages());
-        rtnJson.set("data", data);
+        rtnJson.put("total", ipage.getTotal());
+        rtnJson.put("per_page", ipage.getSize());
+        rtnJson.put("current_page", ipage.getCurrent());
+        rtnJson.put("last_page", ipage.getPages());
+        rtnJson.put("data", data);
         return rtnJson;
     }
 }

@@ -26,22 +26,22 @@ public class UserController {
     @Resource(name = "uniappUserService")
     UserService userService;
     @PostMapping("uniapp/user/getInfo")
-    public AjaxResult getUserInfo(@RequestHeader("authorization") String token) {
-        return userService.getUserInfo(token);
+    public AjaxResult getUserInfo() {
+        return userService.getUserInfo();
     }
 
     @PostMapping("uniapp/user/setInfo")
-    public AjaxResult setUserInfo(String avatar, String nickname, String phone, @RequestHeader("authorization") String token) {
-        return userService.setUserInfo(avatar, nickname, phone, token);
+    public AjaxResult setUserInfo(String avatar, String nickname, String phone) {
+        return userService.setUserInfo(avatar, nickname, phone);
     }
 
     @GetMapping("uniapp/user/orderRecordLog")
-    public AjaxResult orderRecordLog(@RequestHeader("authorization") String token, int page, int limit) {
-        return userService.orderRecordLog(token, page, limit);
+    public AjaxResult orderRecordLog( int page, int limit) {
+        return userService.orderRecordLog(page, limit);
     }
 
     @GetMapping("uniapp/order/list")
-    public AjaxResult orderRecordLog(@RequestHeader("authorization") String token, int page, int limit, int status) {
+    public AjaxResult orderRecordLog( String token, int page, int limit, int status) {
 
         return userService.orderList(token, page, limit, status);
     }

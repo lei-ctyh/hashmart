@@ -16,7 +16,7 @@ public interface UserService {
      * @param token
      * @return
      */
-    AjaxResult getUserInfo(String token);
+    AjaxResult getUserInfo();
 
     /**
      * '设置用户信息
@@ -25,17 +25,17 @@ public interface UserService {
      * @param phone 手机号
      * @return 设置用户信息结果
      */
-    AjaxResult setUserInfo(String avatar, String nickname, String phone, String token);
+    AjaxResult setUserInfo(String avatar, String nickname, String phone);
 
 
     /**
      * 开盒记录
-     * @param token
+     *
      * @param page
      * @param limit
      * @return 开盒记录信息
      */
-    AjaxResult orderRecordLog(String token, int page, int limit);
+    AjaxResult orderRecordLog(int page, int limit);
 
     AjaxResult orderList(String token, int page, int limit, int status);
 }

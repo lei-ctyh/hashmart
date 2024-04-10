@@ -25,6 +25,4 @@ public class HmApiApplication {
         String token = PubfuncUtil.setJWT(payload);
         System.out.println("接口验证Token: Bearer "+token);
     }
-
-
 }

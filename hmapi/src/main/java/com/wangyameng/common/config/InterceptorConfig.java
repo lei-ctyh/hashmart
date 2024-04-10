@@ -24,7 +24,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new UniappInterceptor())
                 .addPathPatterns("/uniapp/**")
-                // todo 排除路径需要整理
-                .excludePathPatterns("uniapp/user/address/**");
+                //
+                .excludePathPatterns("/uniapp/user/login/loginByWechat","/uniapp/user/address/option");
     }
 }

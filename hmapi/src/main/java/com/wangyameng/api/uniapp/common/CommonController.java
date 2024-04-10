@@ -37,11 +37,21 @@ public class CommonController {
     public AjaxResult getavatar()
     {
         return AjaxResult.dataReturn(0, "success", JSONArray.parseArray(PubfuncUtil.getRandAvatar(3)));
-    }@GetMapping("uniapp/common/userAgreement")
+    }
+
+    @GetMapping("uniapp/common/getKeFuCode")
+    public AjaxResult getKeFuCode()
+    {
+        String kefuCodeUrl = PubfuncUtil.getSdParam("sys_base", "kefu_wechat");
+        kefuCodeUrl = PubfuncUtil.replaceBecomeServerHost(kefuCodeUrl);
+        return AjaxResult.dataReturn(0, "success", kefuCodeUrl);
+    }
+
+
+    @GetMapping("uniapp/common/userAgreement")
     public AjaxResult userAgreement(String type)
     {
         return commonService.getUserAgreement(type);
-
     }
 
 }

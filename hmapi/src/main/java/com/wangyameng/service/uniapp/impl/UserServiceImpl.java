@@ -1,12 +1,11 @@
 package com.wangyameng.service.uniapp.impl;
 
-import cn.hutool.jwt.JWT;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.leheyue.wrapper.MPJLambdaWrapper;
 import com.wangyameng.common.core.AjaxResult;
+import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.dao.*;
 import com.wangyameng.dto.OrderRecordDTO;
@@ -15,9 +14,7 @@ import com.wangyameng.service.uniapp.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author zhanglei
@@ -42,9 +39,8 @@ public class UserServiceImpl implements UserService {
     BlindboxDao blindboxDao;
 
     @Override
-    public AjaxResult getUserInfo(String token) {
-        JWT jwt = PubfuncUtil.getJWT(token.substring(7));
-        Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
+    public AjaxResult getUserInfo() {
+        Integer id = UserSessionContext.get().getInteger("id");
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getId, id);
         queryWrapper.eq(User::getStatus, 1);
@@ -80,11 +76,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AjaxResult setUserInfo(String avatar, String nickname, String phone, String token) {
+    public AjaxResult setUserInfo(String avatar, String nickname, String phone) {
 
-        JWT jwt = PubfuncUtil.getJWT(token.substring(7));
-        Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
-
+        Integer id = UserSessionContext.get().getInteger("id");
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getId, id);
         User user = userDao.selectOne(queryWrapper);
@@ -100,9 +94,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AjaxResult orderRecordLog(String token, int page, int limit) {
-        JWT jwt = PubfuncUtil.getJWT(token.substring(7));
-        Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
+    public AjaxResult orderRecordLog(int page, int limit) {
+        Integer id = UserSessionContext.get().getInteger("id");
 
         MPJLambdaWrapper<OrderRecord> wrapper = new MPJLambdaWrapper<OrderRecord>()
                 .selectAll(OrderRecord.class)
@@ -121,8 +114,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AjaxResult orderList(String token, int page, int limit, int status) {
-        JWT jwt = PubfuncUtil.getJWT(token.substring(7));
-        Integer id = ((cn.hutool.json.JSONObject) jwt.getPayload().getClaim("data")).getInt("id");
+        Integer id = UserSessionContext.get().getInteger("id");
 
         return null;
     }

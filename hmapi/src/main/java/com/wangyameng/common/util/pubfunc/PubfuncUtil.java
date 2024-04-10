@@ -3,8 +3,10 @@ package com.wangyameng.common.util.pubfunc;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangyameng.common.core.ApplicationContextHelper;
@@ -82,41 +84,52 @@ public class PubfuncUtil {
     /**
      * 生成子孙树
      *
-     * @param data 遍历所有数据, 每个数据加到其父节点下
+     * @param dataArray 遍历所有数据, 每个数据加到其父节点下
      * @return 子孙树json
      */
-    public static JSONArray makeTree(JSONArray data) {
-        Map<Integer, JSONObject> res = new HashMap<>();
-        JSONArray tree = new JSONArray();
+    public static JSONArray makeTree(JSONArray dataArray) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (int i = 0; i < dataArray.size(); i++) {
+            JSONObject jsonObject = dataArray.getJSONObject(i);
+            Map<String, Object> map = new HashMap<>(jsonObject);
+            data.add(map);
+        }
+
+        List<Map<String, Object>> res = new ArrayList<>();
+        Map<Integer, Map<String, Object>> map = new HashMap<>();
 
         // 整理数组
-        for (Object o : data) {
-            JSONObject item = (JSONObject) o;
-            res.put((Integer) item.get("id"), item);
+        for (Map<String, Object> vo : data) {
+            map.put((Integer) vo.get("id"), vo);
         }
 
         // 查询子孙
-        for (Object o : data) {
-            JSONObject item = (JSONObject) o;
-            if (item.getInteger("pid") != 0) {
-                JSONArray children = res.get(item.getInteger("pid")).getJSONArray("children");
-                if (children == null) {
-                    children = new JSONArray();
+        for (Map<String, Object> vo : data) {
+            Integer pid = (Integer) vo.get("pid");
+            if (pid != 0) {
+                Map<String, Object> parent = map.get(pid);
+                if (parent != null) {
+                    List<Map<String, Object>> children = (List<Map<String, Object>>) parent.get("children");
+                    if (children == null) {
+                        children = new ArrayList<>();
+                        parent.put("children", children);
+                    }
+                    children.add(vo);
                 }
-                children.add(item);
-                res.get(item.getInteger("pid")).put("children", children);
             }
         }
 
         // 去除杂质
-        for (Object o : data) {
-            JSONObject item = (JSONObject) o;
-            if (item.getInteger("pid") == 0) {
-                tree.add(item);
+        for (Map<String, Object> vo : data) {
+            int pid = (Integer) vo.get("pid");
+            if (pid == 0) {
+                res.add(vo);
             }
         }
-        return tree;
+
+        return new JSONArray(res);
     }
+
 
 
     /**
@@ -167,7 +180,7 @@ public class PubfuncUtil {
      * @param domainName 目标域名
      * @return 替换后的链接
      */
-    public static String replaceDomainName(String url, String domainName) {
+    private static String replaceDomainName(String url, String domainName) {
         // (\w+):\/\/([^/:]+)(:\d*)?
         // 转成java正则
         // String regex = "(\\w+):\\/\\/(\\w+)(:\\d*)?";
@@ -202,7 +215,7 @@ public class PubfuncUtil {
      * 获取公网IP地址
      * @return 服务的公网IP地址
      */
-    public static String getPublicIPAddress() {
+    private static String getPublicIPAddress() {
         return getPrivateIPAddress();
     }
 
@@ -278,5 +291,21 @@ public class PubfuncUtil {
             }
         }
         return result.toString();
+    }
+
+    /**
+     * 对象序列化成JSON，但是key值变成帕斯卡
+     */
+    public static JSONObject parseToUnderlineJson(Object object) {
+        if (object != null) {
+            JSONObject json = JSONObject.parseObject(JSON.toJSONString(object));
+            JSONObject jsonObject = new JSONObject();
+            for (String key : json.keySet()) {
+                String camelName = underscoreName(key);
+                jsonObject.put(camelName, json.get(key));
+            }
+            return jsonObject;
+        }
+        return null;
     }
 }

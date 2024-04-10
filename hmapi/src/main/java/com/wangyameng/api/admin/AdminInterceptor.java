@@ -1,8 +1,8 @@
 package com.wangyameng.api.admin;
 
-import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTPayload;
+import com.alibaba.fastjson2.JSONObject;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.ApplicationContextHelper;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
@@ -48,7 +48,7 @@ public class AdminInterceptor implements HandlerInterceptor {
 
             if (data != null) {
                 String id;
-                id = data.getStr("id");
+                id = (String) data.get("id");
                 RedisCacheUtil redisCacheUtil = ApplicationContextHelper.popBean(RedisCacheUtil.class);
                 String authKey =  id+"_auth_map" ;
                 // TODO 给admin分配权限属于危险操作

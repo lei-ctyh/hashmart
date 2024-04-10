@@ -1,6 +1,6 @@
 package com.wangyameng.service.uniapp.impl;
 
-import cn.hutool.json.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.dao.ActivitySliderDao;
@@ -28,7 +28,7 @@ public class ActivityServiceImpl implements ActivityService {
         LambdaQueryWrapper<ActivitySlider> sliderQueryWrapper = new LambdaQueryWrapper<>();
         sliderQueryWrapper.eq(ActivitySlider::getStatus, 1).eq(ActivitySlider::getType, type);
         List<ActivitySlider> activitySliders = activitySliderDao.selectList(sliderQueryWrapper);
-        cn.hutool.json.JSONArray sliderList = new cn.hutool.json.JSONArray();
+        JSONArray sliderList = new JSONArray();
         for (ActivitySlider slider : activitySliders) {
             cn.hutool.json.JSONObject sliderJson = new cn.hutool.json.JSONObject();
             sliderJson.set("id", slider.getId());

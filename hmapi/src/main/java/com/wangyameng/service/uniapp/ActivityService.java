@@ -1,6 +1,7 @@
 package com.wangyameng.service.uniapp;
 
-import cn.hutool.json.JSONArray;
+
+import com.alibaba.fastjson2.JSONArray;
 
 /**
  * @author zhanglei

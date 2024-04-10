@@ -6,11 +6,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/hashmart?serverTimezone=UTC
     username: root
-    password: 1234
+    password: 123456
 
-  sql:
-    init:
-      # TODO 新项目实现数据库脚本的自动创建
 
   # 开启热部署
   devtools:
@@ -37,7 +34,7 @@ spring:
         max-wait: 2000
 
   mvc:
-    pathmatch:
+    path match:
       matching-strategy: ANT_PATH_MATCHER
 
 mybatis-plus:

@@ -9,7 +9,15 @@
 
 <script>
 	// import addressData from '@/utils/area.js';
-	let addressData = uni.getStorageSync('_ADDRESS_CODE')
+  let addressData = uni.getStorageSync('_ADDRESS_CODE');
+
+  if ( !addressData || addressData.length == 0) {
+    get_address_code().then(res => {
+      if (res.code == 0) {
+        uni.setStorageSync('_ADDRESS_CODE', res.data)
+      }
+    }).catch(err => {})
+  }
 	export default {
 		props: {
 			defaultAddress: {

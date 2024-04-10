@@ -1,19 +1,18 @@
 package com.wangyameng.api.uniapp;
 
-import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTPayload;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.wangyameng.common.core.AjaxResult;
-import com.wangyameng.common.core.ApplicationContextHelper;
+import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
-import com.wangyameng.common.util.redis.RedisCacheUtil;
 import com.wangyameng.common.util.text.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * @author zhanglei
@@ -25,13 +24,8 @@ import java.util.Map;
 public class UniappInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return true;
-        /* // 通过所有OPTION请求
-
-        // 检查站点是否正则维护
-        if (!PubfuncUtil.checkOpen()) {
-            return AjaxResult.dataReturn(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase());
-        }
+        // TODO 检查站点是否正则维护
+        // 通过所有OPTION请求
         if(request.getMethod().equals(HttpMethod.OPTIONS.toString())){
             return true;
         } else {
@@ -50,12 +44,19 @@ public class UniappInterceptor implements HandlerInterceptor {
                 return false;
             }
             JWTPayload payload = jwt.getPayload();
-            JSONObject data = (JSONObject) payload.getClaim("data");
+            JSONObject data = JSON.parseObject(payload.getClaim("data").toString()) ;
 
             if (data != null) {
+                UserSessionContext.set(data);
                 return true;
             }
             return false;
-        } */
+        }
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        // 清除用户session
+        UserSessionContext.remove();
     }
 }

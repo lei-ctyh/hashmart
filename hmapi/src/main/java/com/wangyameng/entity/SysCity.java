@@ -13,7 +13,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class SysCity extends Model<SysCity> {
 
-    private Object id;
+    private Integer id;
     // 父级
     private Integer pid;
     // 名称
@@ -32,11 +32,11 @@ public class SysCity extends Model<SysCity> {
     private Integer isShow;
 
 
-    public Object getId() {
+    public Integer  getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
