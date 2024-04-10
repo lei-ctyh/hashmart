@@ -2,6 +2,8 @@ package com.wangyameng.service.uniapp;
 
 import com.wangyameng.common.core.AjaxResult;
 
+import java.util.Map;
+
 /**
  * @author zhanglei
  * @date 2024年04月10日 12:51
@@ -18,4 +20,10 @@ public interface AddressService {
      * @return
      */
     AjaxResult getOption();
+
+    AjaxResult edit(Map<String, Object> params);
+
+    AjaxResult add(Map<String, Object> params);
+
+    AjaxResult setDefault(String addressId);
 }

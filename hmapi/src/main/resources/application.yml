@@ -4,9 +4,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hashmart?serverTimezone=UTC
+    url: jdbc:mysql://zhanglei01:3306/hashmart?serverTimezone=UTC
     username: root
-    password: 123456
+    password: root
 
 
   # 开启热部署
@@ -18,9 +18,9 @@ spring:
   redis:
     database: 5
     # 配置redis的主机地址，需要修改成自己的
-    host: 127.0.0.1
+    host: zhanglei01
     port: 6379
-    password:
+    password: 123
     timeout: 5000
     jedis:
       pool:

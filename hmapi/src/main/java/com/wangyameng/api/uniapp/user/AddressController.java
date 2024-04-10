@@ -3,11 +3,9 @@ package com.wangyameng.api.uniapp.user;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.service.uniapp.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author zhanglei
@@ -28,5 +26,20 @@ public class AddressController {
     @GetMapping("uniapp/user/address/list")
     public AjaxResult list() {
         return addressService.getList();
+    }
+
+    @PostMapping("uniapp/user/address/edit")
+    public AjaxResult edit(@RequestParam Map<String, Object> params) {
+        return addressService.edit(params);
+    }
+
+    @PostMapping("uniapp/user/address/add")
+    public AjaxResult add(@RequestParam Map<String, Object> params) {
+        return addressService.add(params);
+    }
+
+    @PostMapping("uniapp/user/address/setDefault")
+    public AjaxResult setDefault(@RequestParam("id") String addressId) {
+        return addressService.setDefault(addressId);
     }
 }
