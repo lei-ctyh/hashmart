@@ -367,7 +367,6 @@
 				get_user_info().then(res => {
 
 					if (res.code == 0) {
-            debugger
 						let reaminPrice = that.payParms.type == 'box' ? res.data.balance : res.data.integral
             // 1. 微信支付 2. 支付宝 3. 哈希币  4. 余额
 						if (that.payInfo.total_price > reaminPrice && that.currentPayType == 4) {

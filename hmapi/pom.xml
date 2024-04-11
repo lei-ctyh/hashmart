@@ -109,6 +109,13 @@
             <version>5.8.16</version>
         </dependency>
 
+        <!-- 微信支付相关jar -->
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>0.2.12</version>
+        </dependency>
+
 
     </dependencies>
 

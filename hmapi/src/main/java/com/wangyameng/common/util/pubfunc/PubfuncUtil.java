@@ -1,5 +1,7 @@
 package com.wangyameng.common.util.pubfunc;
 
+import cn.hutool.Hutool;
+import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
@@ -307,5 +309,16 @@ public class PubfuncUtil {
             return jsonObject;
         }
         return null;
+    }
+
+    /**
+     * 生成订单号
+     * @param b 业务类型
+     * @return 订单号
+     */
+    public static String makeOrderNo(String b) {
+        // 业务前缀+时间戳+雪花算法
+        SnowflakeGenerator snowflakeGenerator = new SnowflakeGenerator(0, 0);
+        return b+PubfuncUtil.formatDate(new Date(), "yyyyMMddHHmm")+ snowflakeGenerator.next();
     }
 }

@@ -16,4 +16,8 @@ public interface OrderService {
      * @return
      */
     AjaxResult trail(Integer blindboxId, Integer num, Integer useIntegral, Integer type);
+
+    AjaxResult createOrder(Integer blindboxId, Integer num, Integer useIntegral, Integer payWay);
+
+    AjaxResult payOrder(String orderNo, String platform);
 }

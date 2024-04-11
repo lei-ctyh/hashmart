@@ -150,8 +150,6 @@
 					id
 				}).then(res => {
 					if (res.code == '0') {
-            debugger
-
 						this.marketDetail = res.data
 						this.htmlNodes = res.data.content
 						this.swiperList = res.data.image.split(',')
