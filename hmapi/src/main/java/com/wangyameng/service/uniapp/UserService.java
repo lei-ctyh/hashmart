@@ -38,4 +38,12 @@ public interface UserService {
     AjaxResult orderRecordLog(int page, int limit);
 
     AjaxResult orderList(String token, int page, int limit, int status);
+
+    /**
+     * 更新hash种子
+     * @param hash
+     * @return
+     */
+
+    AjaxResult updateHash(String hash);
 }

@@ -42,4 +42,9 @@ public class AddressController {
     public AjaxResult setDefault(@RequestParam("id") String addressId) {
         return addressService.setDefault(addressId);
     }
+
+    @PostMapping("uniapp/user/address/delete")
+    public AjaxResult delete(@RequestParam("id") String addressId) {
+        return addressService.delete(addressId);
+    }
 }

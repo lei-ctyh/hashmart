@@ -5,10 +5,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.service.uniapp.LoginService;
 import com.wangyameng.service.uniapp.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -46,7 +43,10 @@ public class UserController {
         return userService.orderList(token, page, limit, status);
     }
 
+    @PostMapping("uniapp/user/updatehash")
+    public AjaxResult updateHash(@RequestParam("token") String hash) {
 
-
+        return userService.updateHash(hash);
+    }
 
 }

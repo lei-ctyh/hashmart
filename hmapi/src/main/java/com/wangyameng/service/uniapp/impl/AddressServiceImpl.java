@@ -71,6 +71,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+
     public AjaxResult edit(Map<String, Object> params) {
         Integer id = UserSessionContext.get().getInteger("id");
         String province_code = params.get("province_code").toString();
@@ -118,7 +120,7 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult add(Map<String, Object> params) {
         Integer id = UserSessionContext.get().getInteger("id");
         String province_code = params.get("province_code").toString();
@@ -138,9 +140,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult setDefault(String addressId) {
         Integer id = UserSessionContext.get().getInteger("id");
-        setNotDefault(id);
         LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserAddress::getId, addressId);
         UserAddress userAddress = userAddressDao.selectOne(queryWrapper);
@@ -150,10 +152,34 @@ public class AddressServiceImpl implements AddressService {
         if (!Objects.equals(userAddress.getUserId(), id)) {
             return AjaxResult.dataReturn(-3, "地址不属于当前用户");
         }
+        setNotDefault(id);
         userAddress.setDefaultFlag(1);
         userAddress.setUpdateTime(new Date());
         userAddressDao.updateById(userAddress);
         return AjaxResult.dataReturn(0, "设置默认地址成功");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult delete(String addressId) {
+        Integer id = UserSessionContext.get().getInteger("id");
+        if (StringUtils.isBlank(addressId)) {
+            return AjaxResult.dataReturn(-1, "参数错误");
+        }
+
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getId, addressId);
+        UserAddress userAddress = userAddressDao.selectOne(queryWrapper);
+        if (userAddress == null) {
+            return AjaxResult.dataReturn(-2, "地址不存在");
+        }
+        if (!Objects.equals(userAddress.getUserId(), id)) {
+            return AjaxResult.dataReturn(-3, "地址不属于当前用户");
+        }
+        userAddressDao.deleteById(addressId);
+
+
+        return AjaxResult.dataReturn(0, "删除成功");
     }
 
 

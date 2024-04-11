@@ -26,4 +26,6 @@ public interface AddressService {
     AjaxResult add(Map<String, Object> params);
 
     AjaxResult setDefault(String addressId);
+
+    AjaxResult delete(String addressId);
 }

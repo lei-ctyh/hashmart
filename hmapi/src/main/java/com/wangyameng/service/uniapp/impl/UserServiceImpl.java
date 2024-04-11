@@ -7,6 +7,7 @@ import com.github.leheyue.wrapper.MPJLambdaWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
+import com.wangyameng.common.util.text.StringUtils;
 import com.wangyameng.dao.*;
 import com.wangyameng.dto.OrderRecordDTO;
 import com.wangyameng.entity.*;
@@ -48,8 +49,18 @@ public class UserServiceImpl implements UserService {
         if (userInfo != null) {
 
             // 查询待付款订单数
+            LambdaQueryWrapper<Order> orderQuery = new LambdaQueryWrapper<>();
+            orderQuery.eq(Order::getUserId, id);
+            orderQuery.eq(Order::getPayStatus, 1);
+            int unpaidOrders = orderDao.selectCount(orderQuery);
 
             // 待收货订单数
+            orderQuery = new LambdaQueryWrapper<>();
+            orderQuery.eq(Order::getUserId, id);
+            orderQuery.eq(Order::getPayStatus, 3);
+            int unshippedOrders = orderDao.selectCount(orderQuery);
+
+
             JSONObject respData = new JSONObject();
             respData.put("id", userInfo.getId());
             respData.put("nickname", userInfo.getNickname());
@@ -59,16 +70,11 @@ public class UserServiceImpl implements UserService {
             respData.put("balance", userInfo.getBalance());
             respData.put("hash_key", userInfo.getHashKey());
 
-            LambdaQueryWrapper<Order> orderQuery = new LambdaQueryWrapper<>();
-            orderQuery.eq(Order::getUserId, id);
-            orderQuery.eq(Order::getPayStatus, 1);
 
-            // XXX 待付款订单数和待收货订单数似乎没有用到
             // 查询待付款订单数
-            respData.put("unpaid_orders", orderDao.selectCount(orderQuery));
-            orderQuery.eq(Order::getPayStatus, 3);
+            respData.put("unpaid_orders", unpaidOrders);
             // 待收货订单数
-            respData.put("unreceived_orders", orderDao.selectCount(orderQuery));
+            respData.put("unreceived_orders", unshippedOrders);
             return AjaxResult.dataReturn(0, "获取用户信息成功", respData);
         }
         // 'id,nickname,phone,avatar,integral,balance,hash_key'
@@ -117,5 +123,29 @@ public class UserServiceImpl implements UserService {
         Integer id = UserSessionContext.get().getInteger("id");
 
         return null;
+    }
+
+    @Override
+    public AjaxResult updateHash(String hash) {
+        Integer id = UserSessionContext.get().getInteger("id");
+        // 种子长度应当在0-50
+        int minLen = 0;
+        int maxLen = 50;
+        hash = StringUtils.defaultString(hash, "");
+        if (StringUtils.isNotEmpty(hash) && hash.length() > minLen && hash.length() <= maxLen) {
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getId, id);
+            User user = userDao.selectOne(queryWrapper);
+            if (user != null) {
+                user.setHashKey(hash);
+                userDao.updateById(user);
+                return AjaxResult.dataReturn(0, "更新成功");
+            }else {
+                return AjaxResult.error(-1, "该用户不存在");
+            }
+        }
+
+        return AjaxResult.error(-1, "种子长度应在0~50");
+
     }
 }
