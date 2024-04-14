@@ -71,8 +71,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-
     public AjaxResult edit(Map<String, Object> params) {
         Integer id = UserSessionContext.get().getInteger("id");
         String province_code = params.get("province_code").toString();
@@ -120,7 +118,6 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult add(Map<String, Object> params) {
         Integer id = UserSessionContext.get().getInteger("id");
         String province_code = params.get("province_code").toString();
@@ -140,7 +137,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult setDefault(String addressId) {
         Integer id = UserSessionContext.get().getInteger("id");
         LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
@@ -160,7 +156,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult delete(String addressId) {
         Integer id = UserSessionContext.get().getInteger("id");
         if (StringUtils.isBlank(addressId)) {

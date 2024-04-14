@@ -1,25 +1,31 @@
 package com.wangyameng.service.uniapp.impl;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.leheyue.base.MPJBaseMapper;
+import com.github.leheyue.wrapper.MPJLambdaWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.capital.CapitalChangeUtil;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.common.util.text.StringUtils;
-import com.wangyameng.dao.BlindboxDao;
-import com.wangyameng.dao.OrderDao;
-import com.wangyameng.dao.UserDao;
-import com.wangyameng.entity.Blindbox;
-import com.wangyameng.entity.Order;
-import com.wangyameng.entity.User;
+import com.wangyameng.dao.*;
+import com.wangyameng.dto.OrderParamDTO;
+import com.wangyameng.dto.OrderRecordDTO;
+import com.wangyameng.entity.*;
 import com.wangyameng.service.uniapp.OrderService;
+import com.wangyameng.strategy.lottery.LotteryProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.wangyameng.common.core.AjaxResult.CODE_TAG;
 
@@ -40,6 +46,14 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private CapitalChangeUtil capitalChangeUtil;
+    @Autowired
+    private LotteryProvider lotteryProvider;
+    @Autowired
+    private OrderRecordDetailDao orderRecordDetailDao;
+    @Autowired
+    private OrderRecordDao orderRecordDao;
+    @Autowired
+    private BlindboxTagDao blindboxTagDao;
 
 
     @Override
@@ -118,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
         double postage = 0;
         Blindbox blindbox = blindboxDao.selectById(blindboxId);
         Integer userId = UserSessionContext.get().getInteger("id");
-        String nickName = UserSessionContext.get().getString("nickName");
+        String nickName = UserSessionContext.get().getString("nickname");
         JSONObject trailData = (JSONObject) trail.get(AjaxResult.DATA_TAG);
 
         Order order = new Order();
@@ -158,7 +172,6 @@ public class OrderServiceImpl implements OrderService {
         }
         String host = PubfuncUtil.getSdParam("api_url", "api_url");
         // 验证订单信息
-
         Order order = orderDao.selectOne(new LambdaQueryWrapper<Order>()
                 .eq(Order::getOrderNo, orderNo)
                 .eq(Order::getPayStatus, 1));
@@ -167,22 +180,24 @@ public class OrderServiceImpl implements OrderService {
             return AjaxResult.dataReturn(-1, "订单信息错误");
         }
 
-        JSONObject orderParam = new JSONObject();
-        orderParam.put("id", order.getId());
-        orderParam.put("total_num", order.getTotalNum());
-        orderParam.put("unit_price", order.getUnitPrice());
-        orderParam.put("order_no", order.getOrderNo());
-        orderParam.put("trace_id", 0);
-        orderParam.put("blindbox_id", order.getBlindboxId());
-        orderParam.put("user_id", order.getUserId());
-        orderParam.put("user_name", order.getUserName());
-        orderParam.put("pay_price", order.getPayPrice());
-        orderParam.put("pay_integral", order.getPayIntegral());
-        orderParam.put("host", host);
-        orderParam.put("play_id", order.getPlayId());
-        orderParam.put("pay_order_no", order.getPayOrderNo());
-        orderParam.put("subject", "盲盒购买" + order.getTotalNum() + "个");
+        OrderParamDTO orderParamDTO = new OrderParamDTO();
+        orderParamDTO.setId(order.getId());
+        orderParamDTO.setTotalNum(order.getTotalNum());
+        orderParamDTO.setUnitPrice(order.getUnitPrice());
+        orderParamDTO.setOrderNo(order.getOrderNo());
+        orderParamDTO.setTraceId(0);
+        orderParamDTO.setBlindboxId(order.getBlindboxId());
+        orderParamDTO.setUserId(order.getUserId());
+        orderParamDTO.setUserName(order.getUserName());
+        orderParamDTO.setPayPrice(order.getPayPrice());
+        orderParamDTO.setPayIntegral(order.getPayIntegral());
+        orderParamDTO.setHost(host);
+        orderParamDTO.setPlayId(order.getPlayId());
+        orderParamDTO.setPayOrderNo(order.getPayOrderNo());
+        orderParamDTO.setSubject("盲盒购买" + order.getTotalNum() + "个");
 
+
+        User user;
         // 如果使用了哈希币
         if (order.getPayIntegral() > 0) {
             // 扣除用户积分
@@ -190,22 +205,91 @@ public class OrderServiceImpl implements OrderService {
             if ((Integer) ajaxResult.get(CODE_TAG) != 0) {
                 return ajaxResult;
             }
+            JSONObject jsonObject = (JSONObject) ajaxResult.get(AjaxResult.DATA_TAG);
+            user = JSONObject.parseObject(jsonObject.toString(), User.class);
+            // TODO 哈西币变动记录
+
         }
-        // TODO 哈西币变动记录
 
         // 订单需支付金额为0，直接完成订单
         if (order.getPayPrice() == 0) {
-            completeOrder(order);
-
+           return completeOrder(orderParamDTO);
         }
-
+        // 余额支付
+        if (order.getPayWay() == 4) {
+            // 扣除用户余额
+            user = userDao.selectById(order.getUserId());
+            if (user.getBalance().compareTo(order.getPayPrice()) < 0) {
+                return AjaxResult.dataReturn(-1, "余额不足");
+            }
+            user.setBalance(user.getBalance()-order.getPayPrice());
+            userDao.updateById(user);
+            // TODO 余额变动记录
+            return completeOrder(orderParamDTO);
+        }
+        if (StringUtils.equalsIgnoreCase(platform, "miniapp")) {
+            // TODO 小程序支付
+            return AjaxResult.dataReturn(201, "", "$res");
+        }
         return null;
     }
 
-    private void completeOrder(Order order) {
-        Integer userId = UserSessionContext.get().getInteger("id");
-        String hashKey = UserSessionContext.get().getString("hashKey");
-        order.getPlayId();
+    @Override
+    public AjaxResult getResult(String orderNo) {
+        JSONObject resultData = new JSONObject();
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Order::getOrderNo, orderNo);
+        Order order = orderDao.selectOne(queryWrapper);
+        if (order == null) {
+            return AjaxResult.dataReturn(-1, "订单信息错误");
+        }
+        if (order.getPayStatus() == 1) {
+            return AjaxResult.dataReturn(-1, "订单未支付，请重试");
+        }
+        if (order.getStatus() == 2) {
+            return AjaxResult.dataReturn(-1, "订单异常");
+        }
+        LambdaQueryWrapper<OrderRecord> recordQueryWrapper = new LambdaQueryWrapper<>();
+        recordQueryWrapper.eq(OrderRecord::getOrderId, order.getId());
+        OrderRecord orderRecord = orderRecordDao.selectOne(recordQueryWrapper);
+        if (orderRecord == null) {
+            return AjaxResult.dataReturn(-1, "订单记录信息错误");
+        }
+
+        resultData.put("user_id", order.getUserId());
+        resultData.put("username", order.getUserName());
+
+
+        LambdaQueryWrapper<OrderRecordDetail> detailQueryWrapper = new LambdaQueryWrapper<>();
+        detailQueryWrapper.eq(OrderRecordDetail::getOrderRecordId, orderRecord.getId());
+        JSONArray detailData = new JSONArray();
+        List<OrderRecordDetail> orderRecordDetails = orderRecordDetailDao.selectList(detailQueryWrapper);
+        for (OrderRecordDetail orderRecordDetail : orderRecordDetails) {
+            orderRecordDetail.setGoodsImage(PubfuncUtil.replaceBecomeServerHost(orderRecordDetail.getGoodsImage()));
+            JSONObject detailJson = PubfuncUtil.parseToUnderlineJson(orderRecordDetail);
+            Integer tagId = orderRecordDetail.getTagId();
+            if (tagId!= null) {
+                BlindboxTag blindboxTag = blindboxTagDao.selectById(tagId);
+                if (blindboxTag != null) {
+                    detailJson.put("tag_name", blindboxTag.getName());
+                }
+            }
+            detailData.add(detailJson);
+        }
+        resultData.put("detail", detailData);
+        return AjaxResult.dataReturn(0, "success", resultData);
+    }
+
+
+    public AjaxResult completeOrder(OrderParamDTO orderParamDTO) {
+        lotteryProvider.draw(orderParamDTO);
+        // 修改订单状态
+        Order order = orderDao.selectById(orderParamDTO.getId());
+        order.setPayStatus(2);
+        order.setStatus(5);
+        order.setUpdateTime(new Date());
+        orderDao.updateById(order);
+        return AjaxResult.dataReturn(0, "success", order);
     }
 
 }

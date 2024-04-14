@@ -2,7 +2,9 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -15,6 +17,7 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class OrderRecordDetail extends Model<OrderRecordDetail> {
+    @TableId(value = "id",type = IdType.AUTO)
     // ID
     private Integer id;
     // 用户中奖记录id

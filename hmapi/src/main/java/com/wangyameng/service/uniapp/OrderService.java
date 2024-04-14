@@ -20,4 +20,7 @@ public interface OrderService {
     AjaxResult createOrder(Integer blindboxId, Integer num, Integer useIntegral, Integer payWay);
 
     AjaxResult payOrder(String orderNo, String platform);
+
+    AjaxResult getResult(String orderNo);
+
 }

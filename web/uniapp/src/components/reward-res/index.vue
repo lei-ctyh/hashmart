@@ -36,7 +36,7 @@
 				去仓库查收
 			</view>
 			<view class="once-more common" @click="onceMore">
-				再来一次
+				继续抽奖
 			</view>
 		</view>
 	</view>

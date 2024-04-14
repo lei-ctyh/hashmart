@@ -1,22 +1,12 @@
-package com.wangyameng.entity;
+package com.wangyameng.dto;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-
-import java.io.Serializable;
-
-/**
- * 用户奖品盒子历史表(UserBoxLog)表实体类
- *
- * @author wangyameng
- * @since 2023-10-18 22:32:33
- */
-@SuppressWarnings("serial")
-public class UserBoxLog extends Model<UserBoxLog> {
-    @TableId(type = IdType.AUTO)
+public class BagGoodsDTO {
     // ID
     private Object id;
     // 用户ID
@@ -48,6 +38,34 @@ public class UserBoxLog extends Model<UserBoxLog> {
     // 更新时间
     private Date updateTime;
 
+
+    // 用户中奖记录id
+    private Integer orderRecordId;
+    // 用户id
+    // 中奖用户名
+    private String userName;
+    // 用户当前的hash_key
+    private String hashKey;
+    // 当前毫秒级时间戳
+    private String orderTime;
+    // hash算法算出的用户hash值
+    private Integer hashNo;
+    // 所属标签
+    private Integer tagId;
+    // 该商品单抽价格
+    private Double unitPrice;
+    // 商品的价值
+    private Double goodsPrice;
+    // 兑换价格
+    private Double recoveryPrice;
+    // 带负号的盈亏值
+    private Double profit;
+    // 哈希币兑换比例
+    private Integer ratio;
+    // 状态：1 盒子中 2 已兑换 3 已提货
+    @TableField("`RANGE`")
+    // 抽中范围
+    private String range;
 
     public Object getId() {
         return id;
@@ -169,5 +187,99 @@ public class UserBoxLog extends Model<UserBoxLog> {
         this.updateTime = updateTime;
     }
 
-}
+    public Integer getOrderRecordId() {
+        return orderRecordId;
+    }
 
+    public void setOrderRecordId(Integer orderRecordId) {
+        this.orderRecordId = orderRecordId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getHashKey() {
+        return hashKey;
+    }
+
+    public void setHashKey(String hashKey) {
+        this.hashKey = hashKey;
+    }
+
+    public String getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
+    }
+
+    public Integer getHashNo() {
+        return hashNo;
+    }
+
+    public void setHashNo(Integer hashNo) {
+        this.hashNo = hashNo;
+    }
+
+    public Integer getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public Double getGoodsPrice() {
+        return goodsPrice;
+    }
+
+    public void setGoodsPrice(Double goodsPrice) {
+        this.goodsPrice = goodsPrice;
+    }
+
+    public Double getRecoveryPrice() {
+        return recoveryPrice;
+    }
+
+    public void setRecoveryPrice(Double recoveryPrice) {
+        this.recoveryPrice = recoveryPrice;
+    }
+
+    public Double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(Double profit) {
+        this.profit = profit;
+    }
+
+    public Integer getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(Integer ratio) {
+        this.ratio = ratio;
+    }
+
+    public String getRange() {
+        return range;
+    }
+
+    public void setRange(String range) {
+        this.range = range;
+    }
+}

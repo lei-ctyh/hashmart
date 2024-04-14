@@ -1,7 +1,7 @@
 import {
 	request
 } from '@/utils/request.js';
-//盲盒列表
+//鐩茬洅鍒楄〃
 export const get_bag_box_list = (data) => {
 	return request({
 		url: '/order/getBagBoxList',
@@ -9,7 +9,7 @@ export const get_bag_box_list = (data) => {
 		method: 'GET'
 	})
 }
-//商品列表
+//鍟嗗搧鍒楄〃
 export const get_bag_goods_list = (data) => {
 	return request({
 		url: '/order/getBagGoodsList',
@@ -17,7 +17,7 @@ export const get_bag_goods_list = (data) => {
 		method: 'GET'
 	})
 }
-//盲盒兑换
+//鐩茬洅鍏戞崲
 export const bagBoxExchange = (data) => {
 	return request({
 		url: '/order/bagBoxExchange',
@@ -26,7 +26,7 @@ export const bagBoxExchange = (data) => {
 	})
 }
 
-//盲盒提货试算邮费
+//鐩茬洅鎻愯揣璇曠畻閭垂
 export const bagBoxTrail = (data) => {
 	return request({
 		url: '/order/bagBoxTrail',
@@ -34,7 +34,7 @@ export const bagBoxTrail = (data) => {
 		method: 'POST'
 	})
 }
-//盲盒提货创建订单
+//鐩茬洅鎻愯揣鍒涘缓璁㈠崟
 // export const bagBoxCreateOrder = (data) => {
 // 	return request({
 // 		url: '/order/bagBoxCreateOrder',
@@ -42,7 +42,7 @@ export const bagBoxTrail = (data) => {
 // 		method: 'POST'
 // 	})
 // }
-//盲盒提货创建订单
+//鐩茬洅鎻愯揣鍒涘缓璁㈠崟
 export const bagBoxDeliver = (data) => {
 	return request({
 		url: '/order/bagBoxDeliver',
@@ -50,7 +50,7 @@ export const bagBoxDeliver = (data) => {
 		method: 'POST'
 	})
 }
-//盲盒提货支付
+//鐩茬洅鎻愯揣鏀粯
 // export const bagBoxDeliver = (data) => {
 // 	return request({
 // 		url: '/order/bagBoxDeliver',
@@ -58,7 +58,7 @@ export const bagBoxDeliver = (data) => {
 // 		method: 'POST'
 // 	})
 // }
-//盲盒奖品确认收货
+//鐩茬洅濂栧搧纭鏀惰揣
 export const confirmBoxDeliver = (data) => {
 	return request({
 		url: '/order/confirmBoxDeliver',
@@ -66,7 +66,7 @@ export const confirmBoxDeliver = (data) => {
 		method: 'POST'
 	})
 }
-//积分商场奖品确认收货
+//绉垎鍟嗗満濂栧搧纭鏀惰揣
 export const bagGoodsConfirm = (data) => {
 	return request({
 		url: '/order/bagGoodsConfirm',
@@ -74,7 +74,7 @@ export const bagGoodsConfirm = (data) => {
 		method: 'POST'
 	})
 }
-//盲盒提货物流
+//鐩茬洅鎻愯揣鐗╂祦
 export const getExpress = (data) => {
 	return request({
 		url: '/order/express',
@@ -82,7 +82,7 @@ export const getExpress = (data) => {
 		method: 'GET'
 	})
 }
-//商品提货物流
+//鍟嗗搧鎻愯揣鐗╂祦
 export const getShopExpress = (data) => {
 	return request({
 		url: '/order/shop/express',

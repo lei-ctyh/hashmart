@@ -14,5 +14,5 @@ public interface BagService {
      * @param status 状态
      * @return AjaxResult
      */
-    AjaxResult getBagBoxList(int page, int limit, String status);
+    AjaxResult getBagBoxList(int page, int limit, int status);
 }

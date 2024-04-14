@@ -436,50 +436,52 @@
 				this.orderVisible = false
 				this.show = false
 				this.goodsShow = false
-				if (val == 1) {
-					this.closeVisible('', this.payParms, val)
+        // 抽奖完，应该关闭当前页 不然你太流氓了
+        /* if (val == 1) {
+          this.closeVisible('', this.payParms, val)
 
-				}
-				let data = this.payParms
-				data.use_integral = 2
-				if (val != 1) {
-					uni.showLoading({
-						mask: true
-					});
-				}
-				create_order({
-					...data,
-					pay_way: '4'
-				}).then(res => {
-					if (res.code == 0) {
-						let platform = ''
-						// #ifdef APP-PLUS
-						platform = 'app'
-						// #endif
-						// #ifdef MP-WEIXIN
-						platform = 'miniapp'
-						// #endif
-						pay_order({
-							order_no: res.data.order_no,
-							platform
-						}).then(res_order => {
-							this.order_num = res.data
-								.order_no
-							if (val != 1) {
-								this.closeVisible(res.data
-									.order_no, this.payParms, val)
-								uni.hideLoading();
-							}
+        }
 
-						}).catch(err_order => {
-							uni.$u.toast(err_order.msg)
-						})
-					} else {
-						uni.$u.toast(res.msg)
-					}
-				}).catch(err => {
-					uni.$u.toast(err.msg)
-				})
+        let data = this.payParms
+        data.use_integral = 2
+        if (val != 1) {
+          uni.showLoading({
+            mask: true
+          });
+        }
+        create_order({
+          ...data,
+          pay_way: '4'
+        }).then(res => {
+          if (res.code == 0) {
+            let platform = ''
+            // #ifdef APP-PLUS
+            platform = 'app'
+            // #endif
+            // #ifdef MP-WEIXIN
+            platform = 'miniapp'
+            // #endif
+            pay_order({
+              order_no: res.data.order_no,
+              platform
+            }).then(res_order => {
+              this.order_num = res.data
+                .order_no
+              if (val != 1) {
+                this.closeVisible(res.data
+                  .order_no, this.payParms, val)
+                uni.hideLoading();
+              }
+
+            }).catch(err_order => {
+              uni.$u.toast(err_order.msg)
+            })
+          } else {
+            uni.$u.toast(res.msg)
+          }
+        }).catch(err => {
+          uni.$u.toast(err.msg)
+        }) */
 			},
 			buyBox() {
 				if (this.goodsList.length > 0) {

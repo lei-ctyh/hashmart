@@ -2,6 +2,8 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -14,6 +16,7 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class UserBoxHot extends Model<UserBoxHot> {
+    @TableId(type = IdType.AUTO)
     // ID
     private Object id;
     // 用户ID

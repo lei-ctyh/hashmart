@@ -147,6 +147,7 @@ public class LoginServiceImpl implements LoginService {
         map.put("nickname", userInfo.getNickname());
         map.put("phone", userInfo.getPhone());
         map.put("avatar", userInfo.getAvatar());
+        map.put("hashkey", userInfo.getHashKey());
         String token = PubfuncUtil.setJWT(map);
 
         // todo 记录登录日志

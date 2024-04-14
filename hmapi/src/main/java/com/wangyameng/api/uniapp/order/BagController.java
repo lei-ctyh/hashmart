@@ -19,8 +19,8 @@ public class BagController {
 
     @Autowired
     private BagService bagService;
-    @GetMapping("uniapp/getBagBoxList")
-    public AjaxResult cateList() {
-        return bagService.getBagBoxList(1,1,"1");
+    @GetMapping("/uniapp/order/getBagBoxList")
+    public AjaxResult getBagBoxList(int page,int limit,int status) {
+        return bagService.getBagBoxList(page,limit,status);
     }
 }

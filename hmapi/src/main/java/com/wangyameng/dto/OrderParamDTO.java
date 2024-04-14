@@ -1,43 +1,27 @@
 package com.wangyameng.dto;
 
 public class OrderParamDTO {
-    /**
-     *  orderParam.put("id", order.getId());
-     *         orderParam.put("total_num", order.getTotalNum());
-     *         orderParam.put("unit_price", order.getUnitPrice());
-     *         orderParam.put("order_no", order.getOrderNo());
-     *         orderParam.put("trace_id", 0);
-     *         orderParam.put("blindbox_id", order.getBlindboxId());
-     *         orderParam.put("user_id", order.getUserId());
-     *         orderParam.put("user_name", order.getUserName());
-     *         orderParam.put("pay_price", order.getPayPrice());
-     *         orderParam.put("pay_integral", order.getPayIntegral());
-     *         orderParam.put("host", host);
-     *         orderParam.put("play_id", order.getPlayId());
-     *         orderParam.put("pay_order_no", order.getPayOrderNo());
-     *         orderParam.put("subject", "盲盒购买" + order.getTotalNum() + "个");
-     */
 
-    private Long id;
+    private Integer id;
     private Integer totalNum;
     private Double unitPrice;
     private String orderNo;
     private Integer traceId;
-    private Long blindboxId;
-    private Long userId;
+    private Integer blindboxId;
+    private Integer userId;
     private String userName;
     private Double payPrice;
-    private Integer payIntegral;
+    private Double payIntegral;
     private String host;
-    private Long playId;
+    private Integer playId;
     private String payOrderNo;
     private String subject;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -73,19 +57,19 @@ public class OrderParamDTO {
         this.traceId = traceId;
     }
 
-    public Long getBlindboxId() {
+    public Integer getBlindboxId() {
         return blindboxId;
     }
 
-    public void setBlindboxId(Long blindboxId) {
+    public void setBlindboxId(Integer blindboxId) {
         this.blindboxId = blindboxId;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -105,11 +89,11 @@ public class OrderParamDTO {
         this.payPrice = payPrice;
     }
 
-    public Integer getPayIntegral() {
+    public Double getPayIntegral() {
         return payIntegral;
     }
 
-    public void setPayIntegral(Integer payIntegral) {
+    public void setPayIntegral(Double payIntegral) {
         this.payIntegral = payIntegral;
     }
 
@@ -121,11 +105,11 @@ public class OrderParamDTO {
         this.host = host;
     }
 
-    public Long getPlayId() {
+    public Integer getPlayId() {
         return playId;
     }
 
-    public void setPlayId(Long playId) {
+    public void setPlayId(Integer playId) {
         this.playId = playId;
     }
 

@@ -18,7 +18,6 @@ public class CapitalChangeUtil {
     @Autowired
     UserDao userDao;
 
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult decrHash(Double amount,Integer userId) {
         if (amount == null || amount <= 0) {
             return AjaxResult.dataReturn(-1,"哈希币金额错误");
