@@ -1,6 +1,7 @@
 package com.wangyameng.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.UserBoxHot;
 
 /**
@@ -9,7 +10,7 @@ import com.wangyameng.entity.UserBoxHot;
  * @author wangyameng
  * @since 2023-10-18 22:32:33
  */
-public interface UserBoxHotDao extends BaseMapper<UserBoxHot> {
+public interface UserBoxHotDao extends MPJBaseMapper<UserBoxHot> {
 
 }
 

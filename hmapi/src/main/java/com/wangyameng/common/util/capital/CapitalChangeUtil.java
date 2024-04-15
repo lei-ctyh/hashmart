@@ -18,6 +18,13 @@ public class CapitalChangeUtil {
     @Autowired
     UserDao userDao;
 
+
+    /**
+     * 扣减用户的哈希币
+     * @param amount
+     * @param userId
+     * @return
+     */
     public AjaxResult decrHash(Double amount,Integer userId) {
         if (amount == null || amount <= 0) {
             return AjaxResult.dataReturn(-1,"哈希币金额错误");
@@ -37,6 +44,30 @@ public class CapitalChangeUtil {
             userDao.updateById(user);
         }
         return AjaxResult.dataReturn(0,"哈希币减少成功", JSONObject.from(user));
+    }
+
+
+    /**
+     * 增加用户的哈希币
+     * @param amount
+     * @param userId
+     * @return
+     */
+    public AjaxResult addHash(Double amount,Integer userId) {
+        if (amount == null || amount <= 0) {
+            return AjaxResult.dataReturn(-2,"哈希币金额错误");
+        }
+        User user = null;
+        synchronized (CapitalChangeUtil.class) {
+            user = userDao.selectById(userId);
+            if (user == null) {
+                return AjaxResult.dataReturn(-2,"用户不存在");
+            }
+            Double currentHash = user.getIntegral();
+            user.setIntegral(currentHash + amount);
+            userDao.updateById(user);
+        }
+        return AjaxResult.dataReturn(0,"哈希币增加成功", JSONObject.from(user));
     }
 
 }

@@ -15,4 +15,6 @@ public interface BagService {
      * @return AjaxResult
      */
     AjaxResult getBagBoxList(int page, int limit, int status);
+
+    AjaxResult bagBoxExchange(int boxId, int type);
 }

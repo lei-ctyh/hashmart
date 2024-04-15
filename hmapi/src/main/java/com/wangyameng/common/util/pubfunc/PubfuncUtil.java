@@ -10,6 +10,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wangyameng.common.core.ApplicationContextHelper;
 import com.wangyameng.common.util.text.StringUtils;
@@ -153,6 +154,9 @@ public class PubfuncUtil {
      * @see com.wangyameng.common.util.pubfunc.PubfuncUtil#formatDate(java.util.Date, java.lang.String)
      */
     public static String formatDate(Date date) {
+        if (date == null) {
+            return "";
+        }
         return formatDate(date, "yyyy-MM-dd HH:mm:ss");
     }
 
@@ -255,7 +259,7 @@ public class PubfuncUtil {
     }
 
 
-    public static <T> JSONArray paginate(Page<T> ipage) {
+    public static <T> JSONArray paginate(IPage<T> ipage) {
         List<T> records = ipage.getRecords();
 
         JSONArray jsonArray = new JSONArray();
@@ -267,7 +271,11 @@ public class PubfuncUtil {
                 field.setAccessible(true);
                 try {
                     String fieldName = underscoreName(field.getName());
-                    json.put(fieldName, field.get(record));
+                    if (field.getType() == Date.class) {
+                        json.put(fieldName, formatDate((Date) field.get(record)));
+                    }else {
+                        json.put(fieldName, field.get(record));
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }

@@ -1,6 +1,7 @@
 package com.wangyameng.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.UserBoxExchange;
 
 /**
@@ -9,7 +10,7 @@ import com.wangyameng.entity.UserBoxExchange;
  * @author wangyameng
  * @since 2023-10-18 22:32:33
  */
-public interface UserBoxExchangeDao extends BaseMapper<UserBoxExchange> {
+public interface UserBoxExchangeDao extends MPJBaseMapper<UserBoxExchange> {
 
 }
 

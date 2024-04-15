@@ -78,6 +78,9 @@ public class AddressServiceImpl implements AddressService {
         String area_code = params.get("area_code").toString();
         String addressId = (String) params.get("id");
         String is_default = (String) params.get("is_default");
+        String receiver = (String) params.get("receiver");
+        String phone = (String) params.get("phone");
+        String address = (String) params.get("address");
 
         if (StringUtils.isBlank(addressId)) {
             return AjaxResult.dataReturn(-1, "参数错误");
@@ -111,6 +114,9 @@ public class AddressServiceImpl implements AddressService {
         userAddress.setAreaName(sysCities.get(2).getName());
         userAddress.setAddress(params.get("address").toString());
         userAddress.setDefaultFlag(is_default.equals("1") ? 1 : 0);
+        userAddress.setReceiver(receiver);
+        userAddress.setPhone(phone);
+        userAddress.setAddress(address);
         userAddress.setUpdateTime(new Date());
         userAddressDao.updateById(userAddress);
         return AjaxResult.dataReturn(0, "修改成功");
