@@ -1,5 +1,6 @@
 package com.wangyameng.service.uniapp.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -10,15 +11,20 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.capital.CapitalChangeUtil;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
+import com.wangyameng.common.util.text.StringUtils;
 import com.wangyameng.dao.*;
 import com.wangyameng.dto.BagGoodsDTO;
 import com.wangyameng.dto.BoxExchangeDTO;
+import com.wangyameng.dto.PayParamDTO;
 import com.wangyameng.entity.*;
 import com.wangyameng.service.uniapp.BagService;
+import com.wangyameng.strategy.pay.PayProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +51,18 @@ public class BagServiceImpl implements BagService {
     private CapitalChangeUtil capitalChangeUtil;
     @Autowired
     private OrderRecordDetailDao orderRecordDetailDao;
+    @Autowired
+    private GoodsDao goodsDao;
+    @Autowired
+    private UserBoxDeliverDao userBoxDeliverDao;
+    @Autowired
+    private OrderExpressDao orderExpressDao;
+    @Autowired
+    private UserAddressDao userAddressDao;
+    @Autowired
+    private UserBoxDeliverDetailDao userBoxDeliverDetailDao;
+    @Autowired
+    private PayProvider provider;
 
 
     @Override
@@ -64,22 +82,20 @@ public class BagServiceImpl implements BagService {
     }
 
     @Override
-    public AjaxResult bagBoxExchange(int boxId, int type) {
+    public AjaxResult bagBoxExchange(String boxIdStr, int type) {
         List<BoxExchangeDTO> boxExchangeDTOS = new ArrayList<>();
         if (type == 2) {
             MPJLambdaWrapper<UserBoxHot> wrapper = new MPJLambdaWrapper<UserBoxHot>();
             wrapper.selectAll(UserBoxHot.class);
             wrapper.selectAll(OrderRecordDetail.class);
             wrapper.leftJoin(OrderRecordDetail.class, OrderRecordDetail::getId, UserBoxHot::getRecordDetailId);
-            wrapper.in(UserBoxHot::getId, boxId);
+            wrapper.in(UserBoxHot::getId, Arrays.asList(StringUtils.split(boxIdStr, ",")));
             wrapper.eq(UserBoxHot::getUserId, UserSessionContext.get().getInteger("id"));
 
             boxExchangeDTOS = userBoxHotDao.selectJoinList(BoxExchangeDTO.class, wrapper);
             if (boxExchangeDTOS.isEmpty()) {
                 return AjaxResult.dataReturn(-1, "该盒子不存在或已兑换");
             }
-
-
         }
 
 
@@ -141,7 +157,7 @@ public class BagServiceImpl implements BagService {
             userBoxLogDao.updateById(userBoxLog);
         });
         // 6. 增加用户积分
-        capitalChangeUtil.addHash( totalAmount,UserSessionContext.get().getInteger("id"));
+        capitalChangeUtil.addHash(totalAmount, UserSessionContext.get().getInteger("id"));
 
         // 7、标记中奖详情状态
         LambdaQueryWrapper<OrderRecordDetail> updateRecordDetailWrapper = new LambdaQueryWrapper<>();
@@ -152,6 +168,202 @@ public class BagServiceImpl implements BagService {
             orderRecordDetailDao.updateById(orderRecordDetail);
         });
         return AjaxResult.dataReturn(0, "兑换成功");
+    }
+
+    @Override
+    public AjaxResult bagBoxTrail(String boxId, int addressId, int type) {
+        if (type == 2) {
+            LambdaQueryWrapper<UserBoxHot> wrapper = new LambdaQueryWrapper<>();
+            String[] split = StringUtils.split(boxId, ",");
+            wrapper.in(UserBoxHot::getId, Arrays.asList(split));
+            wrapper.eq(UserBoxHot::getUserId, UserSessionContext.get().getInteger("id"));
+
+            List<UserBoxHot> userBoxHots = userBoxHotDao.selectList(wrapper);
+            if (userBoxHots.isEmpty()) {
+                return AjaxResult.dataReturn(-3, "该盒子不存在或已兑换");
+            }
+
+            List<Integer> goodsList = new ArrayList<>();
+            JSONObject bagList = new JSONObject();
+            JSONArray idArr = new JSONArray();
+            JSONArray uuid = new JSONArray();
+            userBoxHots.forEach(userBoxHot -> {
+                goodsList.add(userBoxHot.getGoodsId());
+                uuid.add(userBoxHot.getUuid());
+                idArr.add(userBoxHot.getId());
+            });
+            bagList.put("id", idArr);
+            bagList.put("uuid", uuid);
+
+            // 算最大邮费
+
+            LambdaQueryWrapper<Goods> goodsWrapper = new LambdaQueryWrapper<>();
+            goodsWrapper.in(Goods::getId, goodsList);
+            goodsWrapper.orderByDesc(Goods::getDeliveryFee);
+            Goods goods = goodsDao.selectOne(goodsWrapper);
+            if (goods == null) {
+                return AjaxResult.dataReturn(-3, "该商品不存在");
+            }
+            return AjaxResult.dataReturn(0, bagList.toString(), 100.0);
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult bagBoxDelivery(String boxId, int addressId, int type, String platform, int payWay) {
+        AjaxResult trailData = bagBoxTrail(boxId, addressId, type);
+        if ((Integer) trailData.get(AjaxResult.CODE_TAG) != 0) {
+            return trailData;
+        }
+
+        Double deliveryFee = (Double) trailData.get(AjaxResult.DATA_TAG);
+        String orderNo = PubfuncUtil.makeOrderNo("E");
+        String payNo = PubfuncUtil.makeOrderNo("E");
+        OrderExpress orderExpress = new OrderExpress();
+        orderExpress.setOrderNo(orderNo);
+        orderExpress.setPayNo(payNo);
+        orderExpress.setAmount(deliveryFee);
+        orderExpress.setPayWay(payWay);
+        orderExpress.setBoxType(type);
+        orderExpress.setPayStatus(deliveryFee > 0 ? 1 : 2);
+        orderExpress.setUserId(UserSessionContext.get().getInteger("id"));
+        orderExpress.setUsername(UserSessionContext.get().getString("nickname"));
+        orderExpress.setAddressId(addressId);
+        orderExpress.setExpressContent((String) trailData.get(AjaxResult.MSG_TAG));
+        orderExpress.setCreateTime(new Date());
+        if (deliveryFee == 0) {
+            orderExpress.setPayTime(new Date());
+        }
+
+
+        orderExpressDao.insert(orderExpress);
+        JSONObject orderInfo = JSONObject.from(orderExpress);
+        orderInfo.put("express_order_id", orderExpress.getId());
+
+        // 如果已经支付，则直接完成
+        if (orderExpress.getPayStatus() == 2) {
+            completeExpressOrder(orderExpress, type);
+        }
+
+        // 余额支付
+        if (payWay == 4) {
+            orderExpress.setPayWay(40);
+        }
+
+        PayParamDTO payParamDTO = new PayParamDTO();
+        payParamDTO.setId(orderExpress.getId());
+        payParamDTO.setUser_id(UserSessionContext.get().getInteger("id"));
+        payParamDTO.setUsername(UserSessionContext.get().getString("nickname"));
+        payParamDTO.setPay_price(orderExpress.getAmount());
+        payParamDTO.setHost(PubfuncUtil.getSdParam("api_url", "api_url"));
+        payParamDTO.setPay_order_no(orderExpress.getPayNo());
+        payParamDTO.setSubject("邮费支付");
+        AjaxResult payResult = provider.pay(payParamDTO, orderExpress.getPayWay());
+
+        if (orderExpress.getPayWay() == 40) {
+            if ((Integer) payResult.get(AjaxResult.CODE_TAG) != 0) {
+                return payResult;
+            }
+            return completeExpressOrder(orderExpress, type);
+        }
+
+
+        return AjaxResult.dataReturn(201,"邮费支付",payResult);
+    }
+
+
+    /**
+     * 完成发货订单
+     *
+     * @param rderInfo
+     * @param type
+     * @return
+     */
+    private AjaxResult completeExpressOrder(OrderExpress rderInfo, int type) {
+        JSONObject boxInfo = JSONObject.parseObject(rderInfo.getExpressContent());
+        JSONArray boxIds = boxInfo.getJSONArray("id");
+
+        List<Object> userBagList = new ArrayList<>();
+        // 盒子中的奖品数据
+        if (type == 1) { // 全部
+            LambdaQueryWrapper<UserBoxLog> wrapper = new LambdaQueryWrapper<>();
+            wrapper.in(UserBoxLog::getId, boxIds);
+            wrapper.eq(UserBoxLog::getUserId, UserSessionContext.get().getInteger("id"));
+            wrapper.eq(UserBoxLog::getStatus, 1);
+            List<UserBoxLog> userBoxLogs = userBoxLogDao.selectList(wrapper);
+            if (userBoxLogs.isEmpty()) {
+                return AjaxResult.dataReturn(-1, "该奖品不存在");
+            }
+            userBagList.addAll(userBoxLogs);
+
+        } else { // 盒子中的
+            LambdaQueryWrapper<UserBoxHot> wrapper = new LambdaQueryWrapper<>();
+            wrapper.in(UserBoxHot::getId, boxIds);
+            wrapper.eq(UserBoxHot::getUserId, UserSessionContext.get().getInteger("id"));
+            List<UserBoxHot> UserBoxHots = userBoxHotDao.selectList(wrapper);
+            if (UserBoxHots.isEmpty()) {
+                return AjaxResult.dataReturn(-1, "该奖品不存在");
+            }
+            userBagList.addAll(UserBoxHots);
+        }
+
+        // 查询地址信息
+        LambdaQueryWrapper<UserAddress> addressWrapper = new LambdaQueryWrapper<>();
+        addressWrapper.eq(UserAddress::getId, rderInfo.getAddressId());
+        addressWrapper.eq(UserAddress::getUserId, UserSessionContext.get().getInteger("id"));
+        UserAddress addressInfo = userAddressDao.selectOne(addressWrapper);
+        if (addressInfo == null) {
+            return AjaxResult.dataReturn(-12, "收货地址信息错误");
+        }
+
+        // 1. 提货记录表
+        UserBoxDeliver userBoxDeliver = new UserBoxDeliver();
+
+        userBoxDeliver.setDeliverNo(PubfuncUtil.makeOrderNo("FH"));
+        userBoxDeliver.setExpressOrderId(rderInfo.getId());
+        userBoxDeliver.setAddressId(rderInfo.getAddressId());
+        userBoxDeliver.setAddressInfo(JSON.toJSONString(addressInfo));
+        userBoxDeliver.setUserId(UserSessionContext.get().getInteger("id"));
+        userBoxDeliver.setType(1);
+        userBoxDeliver.setStatus(1);
+        userBoxDeliver.setPostageFee(rderInfo.getAmount());
+        userBoxDeliver.setCreateTime(new Date());
+        userBoxDeliverDao.insert(userBoxDeliver);
+
+        // 2. 记录提货详情
+        List<UserBoxDeliverDetail> deliverDetail = new ArrayList();
+        List<String> uuids = new ArrayList<>();
+        List<Integer> recordDetailIds = new ArrayList<>();
+        userBagList.forEach(o -> {
+            JSONObject json = PubfuncUtil.parseToUnderlineJson(o);
+            uuids.add(json.getString("uuid"));
+            recordDetailIds.add(json.getInteger("record_detail_id"));
+            UserBoxDeliverDetail userBoxDeliverDetail = new UserBoxDeliverDetail();
+            userBoxDeliverDetail.setDeliverId(userBoxDeliver.getId());
+            userBoxDeliverDetail.setUserId(UserSessionContext.get().getInteger("id"));
+            userBoxDeliverDetail.setUserBoxUuid(json.getString("uuid"));
+            userBoxDeliverDetail.setRecordDetailId(json.getInteger("record_detail_id"));
+            userBoxDeliverDetail.setCreateTime(new Date());
+            deliverDetail.add(userBoxDeliverDetail);
+        });
+
+        deliverDetail.forEach(userBoxDeliverDetailDao::insert);
+        // 3. 删除盒子热点表
+        LambdaQueryWrapper<UserBoxHot> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.in(UserBoxHot::getUuid, uuids);
+        userBoxHotDao.delete(deleteWrapper);
+
+        // 4. 更新盒子记录表
+        LambdaQueryWrapper<UserBoxLog> updateWrapper = new LambdaQueryWrapper<>();
+        updateWrapper.in(UserBoxLog::getUuid, uuids);
+        userBoxLogDao.selectList(updateWrapper).forEach(userBoxLog -> {
+            userBoxLog.setStatus(3);
+            userBoxLog.setUpdateTime(new Date());
+            userBoxLogDao.updateById(userBoxLog);
+        });
+
+        return AjaxResult.dataReturn(0, "支付成功");
     }
 
     private AjaxResult getAllBagGoods(int page, int limit, int status) {
@@ -181,26 +393,25 @@ public class BagServiceImpl implements BagService {
      * @return
      */
     private AjaxResult getBoxGoods(int page, int limit) {
-        MPJLambdaWrapper<UserBoxHot> wrapper = new MPJLambdaWrapper<UserBoxHot>()
-                .selectAll(UserBoxHot.class)
-                .selectAll(OrderRecordDetail.class)
-                .leftJoin(OrderRecordDetail.class, OrderRecordDetail::getId, UserBoxHot::getRecordDetailId);
-
+        LambdaQueryWrapper<UserBoxHot> wrapper = new LambdaQueryWrapper<>();
         Integer id = UserSessionContext.get().getInteger("id");
         wrapper.orderByDesc(UserBoxHot::getId);
         wrapper.eq(UserBoxHot::getUserId, id);
 
-        Page<BagGoodsDTO> iPage = userBoxHotDao.selectJoinPage(new Page<>(page, limit), BagGoodsDTO.class, wrapper);
+        Page<UserBoxHot> iPage = userBoxHotDao.selectPage(new Page<>(page, limit), wrapper);
         JSONArray jsonArr = new JSONArray();
-        iPage.getRecords().forEach(bagGoodsDTO -> {
+        iPage.getRecords().forEach(userBoxHot -> {
             // 'id','goods_name','goods_image','exchange_time','exchange_time','create_time','recovery_price'
             JSONObject json = new JSONObject();
-            json.put("id", bagGoodsDTO.getId());
-            json.put("goods_name", bagGoodsDTO.getGoodsName());
-            json.put("goods_image", PubfuncUtil.replaceBecomeServerHost(bagGoodsDTO.getGoodsImage()));
-            json.put("exchange_time", bagGoodsDTO.getExchangeTime());
-            json.put("create_time", bagGoodsDTO.getCreateTime());
-            json.put("recovery_price", bagGoodsDTO.getRecoveryPrice());
+            json.put("id", userBoxHot.getId());
+            json.put("goods_name", userBoxHot.getGoodsName());
+            json.put("goods_image", PubfuncUtil.replaceBecomeServerHost(userBoxHot.getGoodsImage()));
+            json.put("exchange_time", userBoxHot.getExchangeTime());
+            json.put("create_time", userBoxHot.getCreateTime());
+            LambdaQueryWrapper<OrderRecordDetail> detailWrapper = new LambdaQueryWrapper<>();
+            detailWrapper.eq(OrderRecordDetail::getId, userBoxHot.getRecordDetailId());
+            OrderRecordDetail orderRecordDetail = orderRecordDetailDao.selectOne(detailWrapper);
+            json.put("recovery_price", orderRecordDetail.getGoodsPrice());
             jsonArr.add(json);
         });
 
@@ -215,48 +426,47 @@ public class BagServiceImpl implements BagService {
      * @param limit
      */
     private AjaxResult getBoxExchange(int page, int limit) {
-        JSONObject json = JSONObject.parseObject("{\n" +
-                "        \"total\": 3,\n" +
-                "        \"per_page\": 10,\n" +
-                "        \"current_page\": 1,\n" +
-                "        \"last_page\": 1,\n" +
-                "        \"data\": [\n" +
-                "            {\n" +
-                "                \"id\": 1,\n" +
-                "                \"exchange_no\": \"EXCH-001\",\n" +
-                "                \"exchange_time\": \"2024-04-15 10:00:00\",\n" +
-                "                \"detail\": [\n" +
-                "                    {\n" +
-                "                        \"id\": 1,\n" +
-                "                        \"exchange_id\": 1,\n" +
-                "                        \"reward\": {\n" +
-                "                            \"goods_id\":1111,\n" +
-                "                            \"goods_name\": 1111,\n" +
-                "                            \"goods_image\": 1111\n" +
-                "                        }\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"id\": 2,\n" +
-                "                        \"exchange_id\": 1,\n" +
-                "                        \"reward\": {}\n" +
-                "                    }\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"id\": 2,\n" +
-                "                \"exchange_no\": \"EXCH-002\",\n" +
-                "                \"exchange_time\": \"2024-04-14 15:30:00\",\n" +
-                "                \"detail\": [\n" +
-                "                    {\n" +
-                "                        \"id\": 3,\n" +
-                "                        \"exchange_id\": 2,\n" +
-                "                        \"reward\": {}\n" +
-                "                    }\n" +
-                "                ]\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }");
-        return AjaxResult.dataReturn(0, "success", json);
+        LambdaQueryWrapper<UserBoxExchange> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserBoxExchange::getUserId, UserSessionContext.get().getInteger("id"));
+        wrapper.orderByDesc(UserBoxExchange::getId);
+        IPage<UserBoxExchange> iPage = userBoxExchangeDao.selectPage(new Page<>(page, limit), wrapper);
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("total", iPage.getTotal());
+        rtnJson.put("per_page", iPage.getSize());
+        rtnJson.put("current_page", iPage.getCurrent());
+        rtnJson.put("last_page", iPage.getPages());
+        JSONArray data = new JSONArray();
+        iPage.getRecords().forEach(userBoxExchange -> {
+            JSONObject json = new JSONObject();
+            json.put("id", userBoxExchange.getId());
+            json.put("exchange_no", userBoxExchange.getExchangeNo());
+            json.put("exchange_time", userBoxExchange.getCreateTime());
+            List<UserBoxExchangeDetail> userBoxExchangeDetails = userBoxExchangeDetailDao.selectList(new LambdaQueryWrapper<UserBoxExchangeDetail>()
+                    .eq(UserBoxExchangeDetail::getExchangeId, userBoxExchange.getId()));
+            JSONArray detailArr = new JSONArray();
+            userBoxExchangeDetails.forEach(userBoxExchangeDetail -> {
+                JSONObject detailJson = new JSONObject();
+                detailJson.put("id", userBoxExchangeDetail.getId());
+                detailJson.put("exchange_id", userBoxExchangeDetail.getExchangeId());
+
+                // 奖品信息
+                LambdaQueryWrapper<OrderRecordDetail> recordDetailWrapper = new LambdaQueryWrapper<>();
+                recordDetailWrapper.eq(OrderRecordDetail::getId, userBoxExchangeDetail.getRecordDetailId());
+                OrderRecordDetail orderRecordDetail = orderRecordDetailDao.selectOne(recordDetailWrapper);
+                JSONObject reward = new JSONObject();
+                reward.put("id", orderRecordDetail.getId());
+                reward.put("goods_id", orderRecordDetail.getGoodsId());
+                reward.put("goods_name", orderRecordDetail.getGoodsName());
+                reward.put("goods_image", PubfuncUtil.replaceBecomeServerHost(orderRecordDetail.getGoodsImage()));
+                reward.put("recovery_price", orderRecordDetail.getGoodsPrice());
+                detailJson.put("reward", reward);
+                detailArr.add(detailJson);
+            });
+            json.put("detail", detailArr);
+            data.add(json);
+        });
+        rtnJson.put("data", data);
+        return AjaxResult.dataReturn(0, "success", rtnJson);
     }
 
 

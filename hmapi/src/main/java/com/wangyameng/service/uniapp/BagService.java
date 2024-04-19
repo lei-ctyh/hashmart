@@ -16,5 +16,27 @@ public interface BagService {
      */
     AjaxResult getBagBoxList(int page, int limit, int status);
 
-    AjaxResult bagBoxExchange(int boxId, int type);
+    AjaxResult bagBoxExchange(String boxId, int type);
+
+
+    /**
+     * 仓库盲盒试运算
+     * @param boxId
+     * @param addressId
+     * @param type
+     * @return
+     */
+    AjaxResult bagBoxTrail(String boxId, int addressId, int type);
+
+    /**
+     * 盲盒提货订单支付
+     *
+     * @param boxId     盲盒id
+     * @param addressId 地址id
+     * @param type      类型
+     * @param platform
+     * @param payWay
+     * @return
+     */
+    AjaxResult bagBoxDelivery(String boxId, int addressId, int type, String platform, int payWay);
 }

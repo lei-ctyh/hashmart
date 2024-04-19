@@ -1,6 +1,7 @@
 package com.wangyameng.common.util.capital;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dao.UserDao;
 import com.wangyameng.entity.User;
@@ -25,7 +26,7 @@ public class CapitalChangeUtil {
      * @param userId
      * @return
      */
-    public AjaxResult decrHash(Double amount,Integer userId) {
+    public AjaxResult decHash(Double amount,Integer userId) {
         if (amount == null || amount <= 0) {
             return AjaxResult.dataReturn(-1,"哈希币金额错误");
         }
@@ -68,6 +69,26 @@ public class CapitalChangeUtil {
             userDao.updateById(user);
         }
         return AjaxResult.dataReturn(0,"哈希币增加成功", JSONObject.from(user));
+    }
+
+    public AjaxResult decBalance( Double amount,Integer userId) {
+        if (amount == null || amount <= 0) {
+            return AjaxResult.dataReturn(-3,"余额信息错误");
+        }
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getId, userId);
+        User user = userDao.selectOne(queryWrapper);
+
+        if (user == null) {
+            return AjaxResult.dataReturn(-5,"用户不存在");
+        }
+        Double currentBalance = user.getBalance();
+        if (currentBalance < amount) {
+            return AjaxResult.dataReturn(-5,"余额不足");
+        }
+        user.setBalance(currentBalance - amount);
+        userDao.updateById(user);
+        return AjaxResult.dataReturn(0,"余额减少成功", JSONObject.from(user));
     }
 
 }

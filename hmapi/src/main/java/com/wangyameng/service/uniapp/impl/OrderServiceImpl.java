@@ -201,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
         // 如果使用了哈希币
         if (order.getPayIntegral() > 0) {
             // 扣除用户积分
-            AjaxResult ajaxResult = capitalChangeUtil.decrHash(order.getPayIntegral(), order.getUserId());
+            AjaxResult ajaxResult = capitalChangeUtil.decHash(order.getPayIntegral(), order.getUserId());
             if ((Integer) ajaxResult.get(CODE_TAG) != 0) {
                 return ajaxResult;
             }

@@ -37,7 +37,6 @@ public class HashLotteryStrategyImpl implements LotteryStrategy {
     public AjaxResult draw(OrderParamDTO orderParamDTO) {
         String nickName = UserSessionContext.get().getString("nickname");
         String hashKey = UserSessionContext.get().getString("hashkey");
-        long timeMillis = System.currentTimeMillis();
 
         AjaxResult BlindboxDetailR = blindboxService.getBlindboxDetail(String.valueOf(orderParamDTO.getBlindboxId()));
         JSONObject BlindboxDetail= (JSONObject) BlindboxDetailR.get(AjaxResult.DATA_TAG);
@@ -79,13 +78,15 @@ public class HashLotteryStrategyImpl implements LotteryStrategy {
             return AjaxResult.dataReturn(-11, "哈希币兑换比例配置错误");
         }
 
-        int hashNo = makeHashNo(hashKey,timeMillis);
 
         List<UserBoxHot> userBoxHotList = new ArrayList<>();
         List<UserBoxLog> userBoxLogList = new ArrayList<>();
 
 
         for (int i = 0; i < orderParamDTO.getTotalNum(); i++) {
+            long timeMillis = System.currentTimeMillis();
+            int hashNo = makeHashNo(hashKey,timeMillis);
+
             totalAmount += orderParamDTO.getUnitPrice();
             int lottery_min_no =-1;
             int lottery_max_no = -1;
@@ -128,7 +129,7 @@ public class HashLotteryStrategyImpl implements LotteryStrategy {
             orderRecordDetail.setCreateTime(new Date());
             orderRecordDetailDao.insert(orderRecordDetail);
 
-            Integer detailId = orderRecordDetail.getOrderId();
+            Integer detailId = orderRecordDetail.getId();
 
             // 放入盒子
             String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -176,6 +177,7 @@ public class HashLotteryStrategyImpl implements LotteryStrategy {
 
     public static int makeHashNo( String hashKey, long tillTime) {
         long seed = tillTime + hashKey.hashCode();
+        System.out.println(seed+"当前种子");
         Random random = new Random(seed);
         return random.nextInt(10000);
     }

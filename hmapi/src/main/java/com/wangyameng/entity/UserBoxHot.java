@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class UserBoxHot extends Model<UserBoxHot> {
     @TableId(type = IdType.AUTO)
     // ID
-    private Object id;
+    private Integer id;
     // 用户ID
     private Object userId;
     // 盲盒ID
@@ -30,7 +30,7 @@ public class UserBoxHot extends Model<UserBoxHot> {
     // 商户订单号
     private String outTradeNo;
     // 奖品ID
-    private Object goodsId;
+    private Integer goodsId;
     // 奖品名称
     private String goodsName;
     // 奖品图片
@@ -49,11 +49,11 @@ public class UserBoxHot extends Model<UserBoxHot> {
     private Date updateTime;
 
 
-    public Object getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -97,11 +97,11 @@ public class UserBoxHot extends Model<UserBoxHot> {
         this.outTradeNo = outTradeNo;
     }
 
-    public Object getGoodsId() {
+    public Integer getGoodsId() {
         return goodsId;
     }
 
-    public void setGoodsId(Object goodsId) {
+    public void setGoodsId(Integer goodsId) {
         this.goodsId = goodsId;
     }
 

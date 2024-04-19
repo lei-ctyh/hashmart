@@ -2,7 +2,6 @@ package com.wangyameng.api.uniapp.order;
 
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.service.uniapp.BagService;
-import com.wangyameng.service.uniapp.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +25,18 @@ public class BagController {
         return bagService.getBagBoxList(page,limit,status);
     }
     @PostMapping("/uniapp/order/bagBoxExchange")
-    public AjaxResult bagBoxExchange(@RequestParam("box_id") int boxId, @RequestParam("type") int type) {
-        return bagService.bagBoxExchange(boxId,type);
+    public AjaxResult bagBoxExchange(@RequestParam("box_id") String boxIdStr, @RequestParam("type") int type) {
+        return bagService.bagBoxExchange(boxIdStr,type);
+    }
+
+    @PostMapping("/uniapp/order/bagBoxTrail")
+    public AjaxResult bagBoxTrail(@RequestParam("box_id") String boxId,@RequestParam("type") int type, @RequestParam("address_id") int addressId) {
+        return bagService.bagBoxTrail(boxId, addressId,type);
+    }
+
+    @PostMapping("/uniapp/order/bagBoxDeliver")
+    public AjaxResult boxDeliver(@RequestParam("box_id") String boxId, @RequestParam("type") int type, @RequestParam("address_id") int addressId,@RequestParam("pay_way") int payWay, @RequestParam("platform") String platform) {
+        return bagService.bagBoxDelivery(boxId, addressId,type,platform,payWay);
     }
 
 }
