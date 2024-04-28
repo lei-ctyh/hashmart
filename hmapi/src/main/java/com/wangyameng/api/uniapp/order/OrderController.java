@@ -41,5 +41,4 @@ public class OrderController {
     public AjaxResult result(@RequestParam("order_no") String orderNo, String platform) {
         return orderService.getResult(orderNo);
     }
-
 }

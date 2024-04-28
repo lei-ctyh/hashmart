@@ -109,7 +109,7 @@
     "quickapp" : {},
     /* 快应用特有相关 */
     "mp-weixin" : {
-        "appid" : "wxe95451c20d93e9fe", //此处填写自己的appid
+        "appid" : "wxe767cffb35164a6e", //此处填写自己的appid
         "setting" : {
             "urlCheck" : false,
             "es6" : true,

@@ -25,6 +25,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(new UniappInterceptor())
                 .addPathPatterns("/uniapp/**")
                 //
-                .excludePathPatterns("/uniapp/user/login/loginByWechat","/uniapp/user/address/option");
+                .excludePathPatterns("/uniapp/user/login/loginByWechat","/uniapp/user/address/option","/uniapp/notify/wechat");
     }
 }

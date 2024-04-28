@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.wangyameng.common.util.pay.WechatPayUtil.generatePayParams;
+
 /**
  * @author zhanglei
  * @version 1.0.0
@@ -37,6 +39,8 @@ import java.util.List;
  */
 @Service
 public class BagServiceImpl implements BagService {
+    @Autowired
+    UserDao userDao;
     @Autowired
     private UserBoxLogDao userBoxLogDao;
     @Autowired
@@ -75,6 +79,8 @@ public class BagServiceImpl implements BagService {
                 return getBoxGoods(page, limit);
             case 2: // 已兑换
                 return getBoxExchange(page, limit);
+            case 3: // 已提货
+                return getBoxDeliver(page, limit);
             default:
                 return AjaxResult.error("参数错误");
         }
@@ -110,7 +116,7 @@ public class BagServiceImpl implements BagService {
 
         // 1. 记录兑换表
         UserBoxExchange userBoxExchange = new UserBoxExchange();
-        userBoxExchange.setExchangeNo(PubfuncUtil.makeOrderNo("E"));
+        userBoxExchange.setExchangeNo(PubfuncUtil.makeOrderNo("D"));
         userBoxExchange.setUserId(UserSessionContext.get().getInteger("id"));
         userBoxExchange.setUsername(UserSessionContext.get().getString("nickname"));
         userBoxExchange.setExchangeNum(boxExchangeDTOS.size());
@@ -218,8 +224,8 @@ public class BagServiceImpl implements BagService {
         }
 
         Double deliveryFee = (Double) trailData.get(AjaxResult.DATA_TAG);
-        String orderNo = PubfuncUtil.makeOrderNo("E");
-        String payNo = PubfuncUtil.makeOrderNo("E");
+        String orderNo = PubfuncUtil.makeOrderNo("F");
+        String payNo = PubfuncUtil.makeOrderNo("U");
         OrderExpress orderExpress = new OrderExpress();
         orderExpress.setOrderNo(orderNo);
         orderExpress.setPayNo(payNo);
@@ -267,9 +273,9 @@ public class BagServiceImpl implements BagService {
             }
             return completeExpressOrder(orderExpress, type);
         }
-
-
-        return AjaxResult.dataReturn(201,"邮费支付",payResult);
+        String openId = UserSessionContext.get().getString("openid");
+        payParamDTO.setOpenid(openId);
+        return provider.pay(payParamDTO, orderExpress.getPayWay());
     }
 
 
@@ -280,16 +286,20 @@ public class BagServiceImpl implements BagService {
      * @param type
      * @return
      */
-    private AjaxResult completeExpressOrder(OrderExpress rderInfo, int type) {
+    public AjaxResult completeExpressOrder(OrderExpress rderInfo, int type) {
         JSONObject boxInfo = JSONObject.parseObject(rderInfo.getExpressContent());
         JSONArray boxIds = boxInfo.getJSONArray("id");
+
+        LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
+        userWrapper.eq(User::getId, rderInfo.getUserId());
+        User user = userDao.selectOne(userWrapper);
 
         List<Object> userBagList = new ArrayList<>();
         // 盒子中的奖品数据
         if (type == 1) { // 全部
             LambdaQueryWrapper<UserBoxLog> wrapper = new LambdaQueryWrapper<>();
             wrapper.in(UserBoxLog::getId, boxIds);
-            wrapper.eq(UserBoxLog::getUserId, UserSessionContext.get().getInteger("id"));
+            wrapper.eq(UserBoxLog::getUserId, user.getId());
             wrapper.eq(UserBoxLog::getStatus, 1);
             List<UserBoxLog> userBoxLogs = userBoxLogDao.selectList(wrapper);
             if (userBoxLogs.isEmpty()) {
@@ -300,7 +310,7 @@ public class BagServiceImpl implements BagService {
         } else { // 盒子中的
             LambdaQueryWrapper<UserBoxHot> wrapper = new LambdaQueryWrapper<>();
             wrapper.in(UserBoxHot::getId, boxIds);
-            wrapper.eq(UserBoxHot::getUserId, UserSessionContext.get().getInteger("id"));
+            wrapper.eq(UserBoxHot::getUserId, user.getId());
             List<UserBoxHot> UserBoxHots = userBoxHotDao.selectList(wrapper);
             if (UserBoxHots.isEmpty()) {
                 return AjaxResult.dataReturn(-1, "该奖品不存在");
@@ -311,7 +321,7 @@ public class BagServiceImpl implements BagService {
         // 查询地址信息
         LambdaQueryWrapper<UserAddress> addressWrapper = new LambdaQueryWrapper<>();
         addressWrapper.eq(UserAddress::getId, rderInfo.getAddressId());
-        addressWrapper.eq(UserAddress::getUserId, UserSessionContext.get().getInteger("id"));
+        addressWrapper.eq(UserAddress::getUserId, user.getId());
         UserAddress addressInfo = userAddressDao.selectOne(addressWrapper);
         if (addressInfo == null) {
             return AjaxResult.dataReturn(-12, "收货地址信息错误");
@@ -320,11 +330,11 @@ public class BagServiceImpl implements BagService {
         // 1. 提货记录表
         UserBoxDeliver userBoxDeliver = new UserBoxDeliver();
 
-        userBoxDeliver.setDeliverNo(PubfuncUtil.makeOrderNo("FH"));
+        userBoxDeliver.setDeliverNo(PubfuncUtil.makeOrderNo("T"));
         userBoxDeliver.setExpressOrderId(rderInfo.getId());
         userBoxDeliver.setAddressId(rderInfo.getAddressId());
         userBoxDeliver.setAddressInfo(JSON.toJSONString(addressInfo));
-        userBoxDeliver.setUserId(UserSessionContext.get().getInteger("id"));
+        userBoxDeliver.setUserId(user.getId());
         userBoxDeliver.setType(1);
         userBoxDeliver.setStatus(1);
         userBoxDeliver.setPostageFee(rderInfo.getAmount());
@@ -341,7 +351,7 @@ public class BagServiceImpl implements BagService {
             recordDetailIds.add(json.getInteger("record_detail_id"));
             UserBoxDeliverDetail userBoxDeliverDetail = new UserBoxDeliverDetail();
             userBoxDeliverDetail.setDeliverId(userBoxDeliver.getId());
-            userBoxDeliverDetail.setUserId(UserSessionContext.get().getInteger("id"));
+            userBoxDeliverDetail.setUserId(user.getId());
             userBoxDeliverDetail.setUserBoxUuid(json.getString("uuid"));
             userBoxDeliverDetail.setRecordDetailId(json.getInteger("record_detail_id"));
             userBoxDeliverDetail.setCreateTime(new Date());
@@ -367,10 +377,7 @@ public class BagServiceImpl implements BagService {
     }
 
     private AjaxResult getAllBagGoods(int page, int limit, int status) {
-        MPJLambdaWrapper<UserBoxLog> wrapper = new MPJLambdaWrapper<UserBoxLog>()
-                .selectAll(UserBoxLog.class)
-                .selectAll(OrderRecordDetail.class)
-                .leftJoin(OrderRecordDetail.class, OrderRecordDetail::getId, UserBoxLog::getRecordDetailId);
+        MPJLambdaWrapper<UserBoxLog> wrapper = new MPJLambdaWrapper<UserBoxLog>().selectAll(UserBoxLog.class).selectAll(OrderRecordDetail.class).leftJoin(OrderRecordDetail.class, OrderRecordDetail::getId, UserBoxLog::getRecordDetailId);
 
         Integer id = UserSessionContext.get().getInteger("id");
         wrapper.orderByDesc(UserBoxLog::getId);
@@ -441,8 +448,7 @@ public class BagServiceImpl implements BagService {
             json.put("id", userBoxExchange.getId());
             json.put("exchange_no", userBoxExchange.getExchangeNo());
             json.put("exchange_time", userBoxExchange.getCreateTime());
-            List<UserBoxExchangeDetail> userBoxExchangeDetails = userBoxExchangeDetailDao.selectList(new LambdaQueryWrapper<UserBoxExchangeDetail>()
-                    .eq(UserBoxExchangeDetail::getExchangeId, userBoxExchange.getId()));
+            List<UserBoxExchangeDetail> userBoxExchangeDetails = userBoxExchangeDetailDao.selectList(new LambdaQueryWrapper<UserBoxExchangeDetail>().eq(UserBoxExchangeDetail::getExchangeId, userBoxExchange.getId()));
             JSONArray detailArr = new JSONArray();
             userBoxExchangeDetails.forEach(userBoxExchangeDetail -> {
                 JSONObject detailJson = new JSONObject();
@@ -473,46 +479,41 @@ public class BagServiceImpl implements BagService {
     /**
      * 已提货
      */
-    private AjaxResult getBoxDeliver(Integer id, int page, int limit, int status) {
-
-        JSONObject json = JSONObject.parseObject("{\n" +
-                "        \"total\": 3,\n" +
-                "        \"per_page\": 10,\n" +
-                "        \"current_page\": 1,\n" +
-                "        \"last_page\": 1,\n" +
-                "        \"data\": [\n" +
-                "            {\n" +
-                "                \"id\": 1,\n" +
-                "                \"exchange_no\": \"EXCH-001\",\n" +
-                "                \"exchange_time\": \"2024-04-15 10:00:00\",\n" +
-                "                \"detail\": [\n" +
-                "                    {\n" +
-                "                        \"id\": 1,\n" +
-                "                        \"exchange_id\": 1,\n" +
-                "                        \"reward\": {}\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"id\": 2,\n" +
-                "                        \"exchange_id\": 1,\n" +
-                "                        \"reward\": {}\n" +
-                "                    }\n" +
-                "                ]\n" +
-                "            },\n" +
-                "            {\n" +
-                "                \"id\": 2,\n" +
-                "                \"exchange_no\": \"EXCH-002\",\n" +
-                "                \"exchange_time\": \"2024-04-14 15:30:00\",\n" +
-                "                \"detail\": [\n" +
-                "                    {\n" +
-                "                        \"id\": 3,\n" +
-                "                        \"exchange_id\": 2,\n" +
-                "                        \"reward\": {}\n" +
-                "                    }\n" +
-                "                ]\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }");
-        return AjaxResult.dataReturn(0, "success", json);
+    private AjaxResult getBoxDeliver(int page, int limit) {
+        LambdaQueryWrapper<UserBoxDeliver> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserBoxDeliver::getUserId, UserSessionContext.get().getInteger("id"));
+        wrapper.orderByDesc(UserBoxDeliver::getId);
+        IPage<UserBoxDeliver> iPage = userBoxDeliverDao.selectPage(new Page<>(page, limit), wrapper);
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("total", iPage.getTotal());
+        rtnJson.put("per_page", iPage.getSize());
+        rtnJson.put("current_page", iPage.getCurrent());
+        rtnJson.put("last_page", iPage.getPages());
+        JSONArray data = new JSONArray();
+        iPage.getRecords().forEach(userBoxDeliver -> {
+            JSONObject json = new JSONObject();
+            json.put("id", userBoxDeliver.getId());
+            json.put("deliver_no", userBoxDeliver.getDeliverNo());
+            json.put("status", userBoxDeliver.getStatus());
+            json.put("deliver_time", userBoxDeliver.getCreateTime());
+            List<UserBoxDeliverDetail> userBoxDeliverDetails = userBoxDeliverDetailDao.selectList(new LambdaQueryWrapper<UserBoxDeliverDetail>().eq(UserBoxDeliverDetail::getDeliverId, userBoxDeliver.getId()).orderByDesc(UserBoxDeliverDetail::getId));
+            JSONArray detailArr = new JSONArray();
+            userBoxDeliverDetails.forEach(userBoxDeliverDetail -> {
+                JSONObject detailJson = new JSONObject();
+                detailJson.put("user_box_uuid", userBoxDeliverDetail.getUserBoxUuid());
+                OrderRecordDetail orderRecordDetail = orderRecordDetailDao.selectById(userBoxDeliverDetail.getRecordDetailId());
+                JSONObject rewardSimpleJson = new JSONObject();
+                rewardSimpleJson.put("goods_name", orderRecordDetail.getGoodsName());
+                rewardSimpleJson.put("goods_image", PubfuncUtil.replaceBecomeServerHost(orderRecordDetail.getGoodsImage()));
+                rewardSimpleJson.put("goods_id", orderRecordDetail.getGoodsId());
+                detailJson.put("rewardSimple", rewardSimpleJson);
+                detailArr.add(detailJson);
+            });
+            json.put("detail", detailArr);
+            data.add(json);
+        });
+        rtnJson.put("data", data);
+        return AjaxResult.dataReturn(0, "success", rtnJson);
     }
 
     private <T> JSONObject getIpgData(IPage<T> iPage, JSONArray data) {

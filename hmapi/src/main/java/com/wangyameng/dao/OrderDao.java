@@ -1,6 +1,5 @@
 package com.wangyameng.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.Order;
 import org.springframework.stereotype.Repository;

@@ -2,18 +2,13 @@ package com.wangyameng.strategy.lottery.impl;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
-import com.wangyameng.dao.OrderRecordDao;
-import com.wangyameng.dao.OrderRecordDetailDao;
-import com.wangyameng.dao.UserBoxHotDao;
-import com.wangyameng.dao.UserBoxLogDao;
+import com.wangyameng.dao.*;
 import com.wangyameng.dto.OrderParamDTO;
-import com.wangyameng.entity.OrderRecord;
-import com.wangyameng.entity.OrderRecordDetail;
-import com.wangyameng.entity.UserBoxHot;
-import com.wangyameng.entity.UserBoxLog;
+import com.wangyameng.entity.*;
 import com.wangyameng.service.uniapp.BlindboxService;
 import com.wangyameng.strategy.lottery.LotteryStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +18,8 @@ import java.util.*;
 
 @Component("hashLotteryStrategy")
 public class HashLotteryStrategyImpl implements LotteryStrategy {
+    @Autowired
+    private UserDao userDao;
     @Autowired
     private BlindboxService blindboxService;
     @Autowired
@@ -35,8 +32,16 @@ public class HashLotteryStrategyImpl implements LotteryStrategy {
     private UserBoxHotDao userBoxHotDao;
     @Override
     public AjaxResult draw(OrderParamDTO orderParamDTO) {
-        String nickName = UserSessionContext.get().getString("nickname");
-        String hashKey = UserSessionContext.get().getString("hashkey");
+        /* String nickName = UserSessionContext.get().getString("nickname");
+        String hashKey = UserSessionContext.get().getString("hashKey"); */
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getId, orderParamDTO.getUserId());
+        User user = userDao.selectOne(queryWrapper);
+        if (user == null) {
+            return AjaxResult.dataReturn(-11, "用户不存在");
+        }
+        String nickName = user.getNickname();
+        String hashKey = user.getHashKey();
 
         AjaxResult BlindboxDetailR = blindboxService.getBlindboxDetail(String.valueOf(orderParamDTO.getBlindboxId()));
         JSONObject BlindboxDetail= (JSONObject) BlindboxDetailR.get(AjaxResult.DATA_TAG);

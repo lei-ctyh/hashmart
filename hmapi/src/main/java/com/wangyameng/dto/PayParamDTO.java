@@ -16,6 +16,15 @@ public class PayParamDTO {
     private String host;
     private String pay_order_no;
     private String subject;
+    private String openid;
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
 
     public Integer getId() {
         return id;

@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.leheyue.base.MPJBaseMapper;
 import com.github.leheyue.wrapper.MPJLambdaWrapper;
+import com.wangyameng.common.constant.Constants;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.UserSessionContext;
 import com.wangyameng.common.util.capital.CapitalChangeUtil;
@@ -13,9 +14,11 @@ import com.wangyameng.common.util.text.StringUtils;
 import com.wangyameng.dao.*;
 import com.wangyameng.dto.OrderParamDTO;
 import com.wangyameng.dto.OrderRecordDTO;
+import com.wangyameng.dto.PayParamDTO;
 import com.wangyameng.entity.*;
 import com.wangyameng.service.uniapp.OrderService;
 import com.wangyameng.strategy.lottery.LotteryProvider;
+import com.wangyameng.strategy.pay.PayProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -54,6 +57,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderRecordDao orderRecordDao;
     @Autowired
     private BlindboxTagDao blindboxTagDao;
+    @Autowired
+    private PayProvider provider;
 
 
     @Override
@@ -127,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
         if ((Integer) trail.get(CODE_TAG) != 0) {
             return trail;
         }
-        String orderNo = PubfuncUtil.makeOrderNo("B");
+        String orderNo = PubfuncUtil.makeOrderNo("O");
         String payOrderNo = PubfuncUtil.makeOrderNo("B");
         double postage = 0;
         Blindbox blindbox = blindboxDao.selectById(blindboxId);
@@ -228,8 +233,16 @@ public class OrderServiceImpl implements OrderService {
             return completeOrder(orderParamDTO);
         }
         if (StringUtils.equalsIgnoreCase(platform, "miniapp")) {
-            // TODO 小程序支付
-            return AjaxResult.dataReturn(201, "", "$res");
+            String desc = "盲盒支付";
+            String openId = UserSessionContext.get().getString("openid");
+            String outTradeNo = orderParamDTO.getOrderNo();
+            PayParamDTO paramDTO = new PayParamDTO();
+            paramDTO.setOpenid(openId);
+            paramDTO.setPay_order_no(outTradeNo);
+            paramDTO.setSubject(desc);
+            paramDTO.setPay_price(orderParamDTO.getPayPrice());
+
+            return provider.pay(paramDTO, Constants.PayWay.WECHAT_PAY);
         }
         return null;
     }
@@ -246,7 +259,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getPayStatus() == 1) {
             return AjaxResult.dataReturn(-1, "订单未支付，请重试");
         }
-        if (order.getStatus() == 2) {
+        if (order.getPayStatus() >2) {
             return AjaxResult.dataReturn(-1, "订单异常");
         }
         LambdaQueryWrapper<OrderRecord> recordQueryWrapper = new LambdaQueryWrapper<>();
