@@ -22,7 +22,7 @@ public class GoodsRuleExtend extends Model<GoodsRuleExtend> {
     // 属性索引
     private String sku;
     // 属性对应的库存
-    private Object stock;
+    private Integer stock;
     // 销量
     private Object sales;
     // 图片
@@ -66,11 +66,11 @@ public class GoodsRuleExtend extends Model<GoodsRuleExtend> {
         this.sku = sku;
     }
 
-    public Object getStock() {
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(Object stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 

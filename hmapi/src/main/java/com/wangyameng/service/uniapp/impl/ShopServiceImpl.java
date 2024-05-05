@@ -138,17 +138,16 @@ public class ShopServiceImpl implements ShopService {
             GoodsRule goodsRule = goodsRuleDao.selectOne(ruleQueryWrapper);
             JSONObject rule = new JSONObject();
             if (goodsRule != null) {
-                rule.put("rule", UnicodeUtil.toString(StringUtils.defaultString(goodsRule.getRule(), "")));
+                rule.put("rule", JSONArray.parseArray(UnicodeUtil.toString(StringUtils.defaultString(goodsRule.getRule(), ""))));
                 rtnData.put("rule", rule);
             } else {
-                rtnData.put("rule", "");
+                rtnData.put("rule", new JSONArray());
             }
-
+            JSONArray rtnRuleExtend = new JSONArray();
             if (goods.getType() == 2) {
                 LambdaQueryWrapper<GoodsRuleExtend> ruleExtendQueryWrapper = new LambdaQueryWrapper<>();
                 ruleExtendQueryWrapper.eq(GoodsRuleExtend::getGoodsId, id);
                 List<GoodsRuleExtend> goodsRuleExtends = goodsRuleExtendDao.selectList(ruleExtendQueryWrapper);
-                JSONArray rtnRuleExtend = new JSONArray();
                 for (GoodsRuleExtend goodsRuleExtend : goodsRuleExtends) {
                     JSONObject ruleExtend = new JSONObject();
                     ruleExtend.put("id", goodsRuleExtend.getId());
@@ -161,9 +160,10 @@ public class ShopServiceImpl implements ShopService {
                     ruleExtend.put("integral_price", goodsRuleExtend.getIntegralPrice());
                     rtnRuleExtend.add(ruleExtend);
                 }
-                rtnData.put("ruleExtend", rtnRuleExtend);
 
             }
+            rtnData.put("ruleExtend", rtnRuleExtend);
+
             return AjaxResult.dataReturn(0, "success", rtnData);
         }
 

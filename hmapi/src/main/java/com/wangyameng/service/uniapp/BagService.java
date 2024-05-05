@@ -39,4 +39,6 @@ public interface BagService {
      * @return
      */
     AjaxResult bagBoxDelivery(String boxId, int addressId, int type, String platform, int payWay);
+
+    AjaxResult getBagGoodsList(int page, int limit, int status);
 }

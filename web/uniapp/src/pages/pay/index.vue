@@ -347,7 +347,7 @@
 											// #endif
 
 											pay_shop_order({
-												order_no: res.data.order_no,
+                        pay_order_no: res.data.pay_order_no,
 												platform
 											}).then(res_order => {
 												uni.hideLoading()

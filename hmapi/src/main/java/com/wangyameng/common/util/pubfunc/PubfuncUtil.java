@@ -321,7 +321,7 @@ public class PubfuncUtil {
 
     /**
      * 生成订单号
-     * @param B 盲盒支付订单  U 邮费支付单号 D盲盒兑换记录 O盲盒订单 F 邮费订单号 T 提货订单
+     * @param b 盲盒支付订单  U 邮费支付单号 D盲盒兑换记录 O盲盒订单 F 邮费订单号 T 提货订单 S 商品购买订单号 G 商品订单支付号
      * @return 订单号
      */
     public static String makeOrderNo(String b) {

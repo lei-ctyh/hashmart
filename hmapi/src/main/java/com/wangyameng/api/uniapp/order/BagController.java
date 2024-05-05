@@ -24,6 +24,12 @@ public class BagController {
     public AjaxResult getBagBoxList(int page,int limit,int status) {
         return bagService.getBagBoxList(page,limit,status);
     }
+
+    @GetMapping("/uniapp/order/getBagGoodsList")
+    public AjaxResult getBagGoodsList(int page,int limit,int status) {
+        return bagService.getBagGoodsList(page,limit,status);
+    }
+
     @PostMapping("/uniapp/order/bagBoxExchange")
     public AjaxResult bagBoxExchange(@RequestParam("box_id") String boxIdStr, @RequestParam("type") int type) {
         return bagService.bagBoxExchange(boxIdStr,type);

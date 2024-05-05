@@ -67,6 +67,10 @@ public class BagServiceImpl implements BagService {
     private UserBoxDeliverDetailDao userBoxDeliverDetailDao;
     @Autowired
     private PayProvider provider;
+    @Autowired
+    private OrderDetailDao orderDetailDao;
+    @Autowired
+    private OrderDao orderDao;
 
 
     @Override
@@ -84,6 +88,43 @@ public class BagServiceImpl implements BagService {
             default:
                 return AjaxResult.error("参数错误");
         }
+
+    }
+
+    @Override
+    public AjaxResult getBagGoodsList(int page, int limit, int status) {
+        String userId = UserSessionContext.get().getString("id");
+        IPage<OrderDetail> iPage = new Page<>(page, limit);
+        LambdaQueryWrapper<OrderDetail> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderDetail::getUserId, userId);
+        wrapper.orderByDesc(OrderDetail::getId);
+        IPage<OrderDetail> pageData = orderDetailDao.selectPage(iPage, wrapper);
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("total", iPage.getTotal());
+        rtnJson.put("per_page", iPage.getSize());
+        rtnJson.put("current_page", iPage.getCurrent());
+        rtnJson.put("last_page", iPage.getPages());
+
+        JSONArray data = new JSONArray();
+        pageData.getRecords().forEach(orderDetail -> {
+            JSONObject json = new JSONObject();
+            json.put("id", orderDetail.getId());
+            json.put("order_id", orderDetail.getOrderId());
+            json.put("goods_name", orderDetail.getGoodsName());
+            json.put("goods_image", PubfuncUtil.replaceBecomeServerHost(orderDetail.getGoodsImage()));
+            json.put("create_time", orderDetail.getCreateTime());
+            LambdaQueryWrapper<Order> orderWrapper = new LambdaQueryWrapper<>();
+            orderWrapper.eq(Order::getId, orderDetail.getOrderId());
+            orderWrapper.eq(Order::getStatus, status);
+            Order order = orderDao.selectOne(orderWrapper);
+            if (order != null) {
+                json.put("status", order.getStatus());
+                json.put("order_no", order.getOrderNo());
+                data.add(json);
+            }
+        });
+        rtnJson.put("data", data);
+        return AjaxResult.dataReturn(0, "success",rtnJson);
 
     }
 

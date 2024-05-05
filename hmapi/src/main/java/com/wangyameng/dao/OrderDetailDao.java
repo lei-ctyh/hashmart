@@ -1,6 +1,7 @@
 package com.wangyameng.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.leheyue.base.MPJBaseMapper;
 import com.wangyameng.entity.OrderDetail;
 
 /**
@@ -9,7 +10,7 @@ import com.wangyameng.entity.OrderDetail;
  * @author wangyameng
  * @since 2023-10-18 22:32:31
  */
-public interface OrderDetailDao extends BaseMapper<OrderDetail> {
+public interface OrderDetailDao extends MPJBaseMapper<OrderDetail> {
 
 }
 
