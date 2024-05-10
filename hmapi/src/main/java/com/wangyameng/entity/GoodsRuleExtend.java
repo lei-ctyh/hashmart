@@ -2,7 +2,9 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -15,6 +17,7 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class GoodsRuleExtend extends Model<GoodsRuleExtend> {
+    @TableId(type = IdType.AUTO)
     // 主键id
     private Integer id;
     // 商品ID
@@ -33,7 +36,7 @@ public class GoodsRuleExtend extends Model<GoodsRuleExtend> {
     // 展示价格
     private Double price;
     // 兑换金额
-    private Object recoveryPrice;
+    private Double recoveryPrice;
     // 成本价
     private Object costPrice;
     // 哈希币价格
@@ -106,11 +109,11 @@ public class GoodsRuleExtend extends Model<GoodsRuleExtend> {
         this.price = price;
     }
 
-    public Object getRecoveryPrice() {
+    public Double getRecoveryPrice() {
         return recoveryPrice;
     }
 
-    public void setRecoveryPrice(Object recoveryPrice) {
+    public void setRecoveryPrice(Double recoveryPrice) {
         this.recoveryPrice = recoveryPrice;
     }
 

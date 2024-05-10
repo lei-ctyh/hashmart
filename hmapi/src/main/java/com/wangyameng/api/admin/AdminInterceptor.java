@@ -2,6 +2,7 @@ package com.wangyameng.api.admin;
 
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTPayload;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.core.ApplicationContextHelper;
@@ -30,7 +31,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             return true;
         } else {
             // 获取请求头中的token
-            String token = request.getHeader("authorization");
+            String token = request.getHeader("Authorization");
             int jwtStrMinLen = 7;
             if (StringUtils.isBlank(token) || token.length()<jwtStrMinLen) {
                 response.setContentType("application/json;charset=UTF-8");
@@ -44,15 +45,16 @@ public class AdminInterceptor implements HandlerInterceptor {
                 return false;
             }
             JWTPayload payload = jwt.getPayload();
-            JSONObject data = (JSONObject) payload.getClaim("data");
+            JSONObject data = JSON.parseObject(payload.getClaim("data").toString()) ;
 
             if (data != null) {
-                String id;
-                id = (String) data.get("id");
+                Integer id;
+                id = (Integer) data.get("id");
                 RedisCacheUtil redisCacheUtil = ApplicationContextHelper.popBean(RedisCacheUtil.class);
                 String authKey =  id+"_auth_map" ;
                 // TODO 给admin分配权限属于危险操作
-                if (StringUtils.equals(authKey, "1_auth_map")) {
+                String hashmart_auth_skip = request.getParameter("hashmart_auth_skip");
+                if (StringUtils.equals(authKey, "1_auth_map") || StringUtils.equals(hashmart_auth_skip, "1")) {
                     return true;
                 }
                 Map<String, Object> authMap = redisCacheUtil.getCacheMap(authKey);

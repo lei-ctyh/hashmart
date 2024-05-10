@@ -1,5 +1,7 @@
 package com.wangyameng.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -12,6 +14,7 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class GoodsRule extends Model<GoodsRule> {
+    @TableId(type = IdType.AUTO)
     // 商品规格id
     private Integer id;
     // 商品id

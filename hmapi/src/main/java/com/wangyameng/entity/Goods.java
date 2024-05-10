@@ -2,6 +2,8 @@ package com.wangyameng.entity;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
@@ -14,8 +16,10 @@ import java.io.Serializable;
  */
 @SuppressWarnings("serial")
 public class Goods extends Model<Goods> {
+    @TableId(type = IdType.AUTO)
+
     // ID
-    private Object id;
+    private Integer id;
     // 所属商品分类
     private Integer cateId;
     // 1:普通商品  2:盲盒商品 3:哈希币 4:优惠券商品 5:余额商品
@@ -58,11 +62,11 @@ public class Goods extends Model<Goods> {
     private Date deleteTime;
 
 
-    public Object getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

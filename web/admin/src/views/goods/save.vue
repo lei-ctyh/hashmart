@@ -80,8 +80,8 @@
 						<el-input v-model="form.price" style="width:500px" type="number"/>
 					</el-form-item>
 					<el-form-item label="可兑换哈希币">
-						<el-input v-model="form.recovery_price" style="width:370px" type="number"/> 
-						<el-input v-model="recover_price" style="width:100px;margin-left: 30px;" type="number"/> 元 
+						<el-input v-model="form.recovery_price" style="width:370px" type="number"/>
+						<el-input v-model="recover_price" style="width:100px;margin-left: 30px;" type="number"/> 元
 						<el-tooltip class="item" effect="dark" content="(您可以在此处填写金额，系统自动帮您生成哈希币金额)" placement="top-start">
 							<el-icon><component :is="QuestionFilled"/></el-icon>
 						</el-tooltip>
@@ -91,7 +91,7 @@
 					</el-form-item>
 					<el-form-item label="售价(哈希币)">
 						<el-input v-model="form.integral_price" style="width:370px" type="number"/>
-						<el-input v-model="integral_price" style="width:100px;margin-left: 30px;" type="number"/> 元 
+						<el-input v-model="integral_price" style="width:100px;margin-left: 30px;" type="number"/> 元
 						<el-tooltip class="item" effect="dark" content="(您可以在此处填写金额，系统自动帮您生成哈希币金额)" placement="top-start">
 							<el-icon><component :is="QuestionFilled"/></el-icon>
 						</el-tooltip>
@@ -108,7 +108,8 @@
 					<el-table
 						:data="preItem"
 						border
-						style="width: 1200px">
+						style="width: 1200px"
+					>
 						<el-table-column
 							label="规格名"
 							width="200">
@@ -245,7 +246,7 @@
 		<el-form ref="form" :model="batchForm" label-width="120px">
 			<el-form-item :label="batchTitle">
 				<el-input v-model="batchForm.field" type="number" style="width: 200px;"></el-input>
-				<div v-if="setField == 'recovery_price' || setField == 'integral_price'"><el-input v-model="set_integral_price" style="width:90px;margin-left: 30px;" type="number" /> 元</div> 
+				<div v-if="setField == 'recovery_price' || setField == 'integral_price'"><el-input v-model="set_integral_price" style="width:90px;margin-left: 30px;" type="number" /> 元</div>
 				<el-tooltip class="item" effect="dark" content="(您可以在此处填写金额，系统自动帮您生成哈希币金额)" placement="top-start" v-if="setField == 'recovery_price' || setField == 'integral_price'">
 					<el-icon><component :is="QuestionFilled"/></el-icon>
 				</el-tooltip>
@@ -360,21 +361,21 @@ export default {
 	watch: {
 		'recover_price': {
 			handler(newVal) {
-				this.form.recovery_price = (newVal * this.ratio).toFixed(2) 
+				this.form.recovery_price = (newVal * this.ratio).toFixed(2)
 			},
 			deep: true,
 			immediate: true
 		},
 		'integral_price': {
 			handler(newVal) {
-				this.form.integral_price = (newVal * this.ratio).toFixed(2) 
+				this.form.integral_price = (newVal * this.ratio).toFixed(2)
 			},
 			deep: true,
 			immediate: true
 		},
 		'set_integral_price': {
 			handler(newVal) {
-				this.batchForm.field = (newVal * this.ratio).toFixed(2) 
+				this.batchForm.field = (newVal * this.ratio).toFixed(2)
 			},
 			deep: true,
 			immediate: true
@@ -385,7 +386,7 @@ export default {
 		async getBaseInfo() {
 			let res = await this.$API.system.base.get()
       this.ratio = res.data.change_ratio
-      
+
       this.recover_price = (this.form.recovery_price / this.ratio).toFixed(2)
       this.integral_price = (this.form.integral_price / this.ratio).toFixed(2)
 
@@ -623,8 +624,10 @@ export default {
 
 			if (row.rule) {
 				this.preItem = JSON.parse(row.rule.rule)
+				console.log(this.preItem)
+
 			}
-			
+
 			if (row.ruleExtend) {
 
 				let titleMap = [];
@@ -644,6 +647,7 @@ export default {
 					}
 				})
 				this.final = row.ruleExtend
+				console.log(this.final)
 			}
 		}
 	},
