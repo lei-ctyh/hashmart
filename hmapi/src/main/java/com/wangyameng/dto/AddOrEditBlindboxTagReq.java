@@ -1,12 +1,10 @@
-package com.wangyameng.entity;
-
-import java.util.Date;
+package com.wangyameng.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
-import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 盲盒商品标签(BlindboxTag)表实体类
@@ -15,8 +13,8 @@ import java.io.Serializable;
  * @since 2023-10-18 22:32:31
  */
 @SuppressWarnings("serial")
-public class BlindboxTag extends Model<BlindboxTag> {
-    @TableId(type = IdType.AUTO)
+public class AddOrEditBlindboxTagReq  {
+
     // 分类id
     private Integer id;
     // 分类名称
@@ -27,11 +25,6 @@ public class BlindboxTag extends Model<BlindboxTag> {
     private Integer sort;
     // 色号
     private String color;
-    // 创建时间
-    private Date createTime;
-    // 更新时间
-    private Date updateTime;
-
 
     public Integer getId() {
         return id;
@@ -72,22 +65,5 @@ public class BlindboxTag extends Model<BlindboxTag> {
     public void setColor(String color) {
         this.color = color;
     }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
 }
 
