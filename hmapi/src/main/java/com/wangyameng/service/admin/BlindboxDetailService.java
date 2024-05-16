@@ -18,4 +18,8 @@ public interface BlindboxDetailService {
     AjaxResult getLotteryNumRange(Integer blindboxId, Double percent, Integer detailId);
 
     AjaxResult addBlindboxDetail(AddOrEditBlindboxDetailReq req);
+
+    AjaxResult editBlindboxDetail(AddOrEditBlindboxDetailReq req);
+
+    AjaxResult delBlindboxDetail(Integer id, Integer blindboxId);
 }

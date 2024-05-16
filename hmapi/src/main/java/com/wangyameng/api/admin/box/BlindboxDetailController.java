@@ -3,7 +3,6 @@ package com.wangyameng.api.admin.box;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.AddOrEditBlindboxDetailReq;
 import com.wangyameng.service.admin.BlindboxDetailService;
-import com.wangyameng.service.uniapp.BlindboxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,4 +40,13 @@ public class BlindboxDetailController {
     public AjaxResult add(@RequestBody AddOrEditBlindboxDetailReq req) {
         return blindboxDetailService.addBlindboxDetail(req);
     }
+    @PostMapping("/admin/box.blindboxDetail/edit")
+    public AjaxResult edit(@RequestBody AddOrEditBlindboxDetailReq req) {
+        return blindboxDetailService.editBlindboxDetail(req);
+    }
+    @GetMapping("/admin/box.blindboxDetail/del")
+    public AjaxResult del(Integer id, Integer blindbox_id) {
+        return blindboxDetailService.delBlindboxDetail(id, blindbox_id);
+    }
+
 }

@@ -11,10 +11,12 @@ public class AddOrEditBlindboxDetailReq {
 
 
     private Integer blindbox_id;
+    @com.fasterxml.jackson.annotation.JsonProperty("goods_id")
+
     private Integer goods_id;
     private String goods_image;
     private String goods_name;
-    private String id;
+    private Integer id;
     private Integer lottery_max_no;
     private Integer lottery_min_no;
     private Double price;
@@ -35,7 +37,7 @@ public class AddOrEditBlindboxDetailReq {
         return goods_id;
     }
 
-    public void setGoods_id(String Integer) {
+    public void setGoods_id(Integer goods_id) {
         this.goods_id = goods_id;
     }
 
@@ -55,11 +57,11 @@ public class AddOrEditBlindboxDetailReq {
         this.goods_name = goods_name;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

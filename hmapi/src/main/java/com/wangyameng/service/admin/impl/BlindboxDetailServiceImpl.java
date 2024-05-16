@@ -144,42 +144,7 @@ public class BlindboxDetailServiceImpl implements BlindboxDetailService {
 
     @Override
     public AjaxResult addBlindboxDetail(AddOrEditBlindboxDetailReq req) {
-        /**
-         * try {
-         *             validate(BlindboxDetailValidate::class)->check($param);
-         *         } catch (ValidateException $e) {
-         *             return dataReturn(-1, $e->getError());
-         *         }
-         *
-         *         $blindboxDetailModel = new BlindboxDetail();
-         *         $has = $blindboxDetailModel->checkUnique([
-         *             'goods_id' => $param['goods_id'],
-         *             'blindbox_id' => $param['blindbox_id']
-         *         ])['data'];
-         *         if (!empty($has)) {
-         *             return dataReturn(-2, '该商品已经存在');
-         *         }
-         *
-         *         if (empty($param['probability'])) {
-         *             return dataReturn(-4, '请输入正确的概率');
-         *         }
-         *
-         *         // 最大概率设置
-         *         $sum = $blindboxDetailModel->where('blindbox_id', $param['blindbox_id'])->sum('probability');
-         *         if ($sum == 100) {
-         *             return dataReturn(-6, '该盲盒的概率已达到100%无法新增了');
-         *         }
-         *
-         *         $canSet = round(100 - $sum, 4);
-         *         if (bccomp($param['probability'], $canSet, 4) == 1) {
-         *             return dataReturn(-5, '该盲盒剩下最大的概率只可设置为：' . $canSet . '%');
-         *         }
-         *
-         *         $param['create_time'] = now();
-         *         $blindboxDetailModel->insertOne($param);
-         *
-         *         return $this->recalculateNoRange($param['blindbox_id']);
-         */
+
         LambdaQueryWrapper<BlindboxDetail> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(BlindboxDetail::getBlindboxId, req.getBlindbox_id());
         wrapper.eq(BlindboxDetail::getGoodsId, req.getGoods_id());
@@ -225,35 +190,71 @@ public class BlindboxDetailServiceImpl implements BlindboxDetailService {
         return recalculateNoRange(blindboxDetail.getBlindboxId());
     }
 
+    @Override
+    public AjaxResult editBlindboxDetail(AddOrEditBlindboxDetailReq req) {
+        // 判断商品是否存在
+        LambdaQueryWrapper<BlindboxDetail> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(BlindboxDetail::getBlindboxId, req.getBlindbox_id());
+        wrapper.eq(BlindboxDetail::getGoodsId, req.getGoods_id());
+        BlindboxDetail blindboxInfo = blindboxDetailDao.selectOne(wrapper);
+
+        if (blindboxInfo != null && blindboxInfo.getId()!=req.getId()) {
+            return AjaxResult.dataReturn(-2, "该商品已经存在");
+        }
+        if (req.getProbability() == null || req.getProbability() < 0 || req.getProbability() > 100) {
+            return AjaxResult.dataReturn(-4, "请输入正确的概率");
+        }
+        // 最大概率设置
+        LambdaQueryWrapper<BlindboxDetail> sumWrapper = new LambdaQueryWrapper<>();
+        sumWrapper.eq(BlindboxDetail::getBlindboxId, req.getBlindbox_id());
+        List<BlindboxDetail> blindboxDetails = blindboxDetailDao.selectList(sumWrapper);
+
+        Double sum = 0D;
+        for (BlindboxDetail blindboxDetail : blindboxDetails) {
+            sum += blindboxDetail.getProbability();
+        }
+        if (sum == 100) {
+            return AjaxResult.dataReturn(-6, "该盲盒的概率已达到100%无法新增了");
+        }
+        Double canSet = 100 - sum;
+        if (req.getProbability() > canSet) {
+            return AjaxResult.dataReturn(-5, "该盲盒剩下最大的概率只可设置为：" + canSet + "%");
+        }
+        LambdaQueryWrapper<BlindboxDetail> updateWrapper = new LambdaQueryWrapper<>();
+        updateWrapper.eq(BlindboxDetail::getId, req.getId());
+        BlindboxDetail updateInfo = blindboxDetailDao.selectOne(updateWrapper);
+        updateInfo.setTagId(req.getTag_id());
+        updateInfo.setGoodsName(req.getGoods_name());
+        updateInfo.setGoodsImage(req.getGoods_image());
+        updateInfo.setPrice(req.getPrice());
+        updateInfo.setRecoveryPrice(req.getRecovery_price());
+        updateInfo.setStock(req.getStock());
+        updateInfo.setLotteryMinNo(req.getLottery_min_no());
+        updateInfo.setLotteryMaxNo(req.getLottery_max_no());
+        updateInfo.setProbability(req.getProbability());
+        updateInfo.setSort(0);
+        updateInfo.setUpdateTime(new Date());
+        blindboxDetailDao.updateById(updateInfo);
+        return recalculateNoRange(blindboxInfo.getBlindboxId());
+    }
+
+    @Override
+    public AjaxResult delBlindboxDetail(Integer id, Integer blindboxId) {
+        BlindboxDetail blindboxDetail = blindboxDetailDao.selectById(id);
+        if (blindboxDetail == null) {
+            return AjaxResult.dataReturn(-1, "该商品不存在");
+        }
+        blindboxDetailDao.deleteById(id);
+        return recalculateNoRange(blindboxDetail.getBlindboxId());
+    }
+
     /**
      * 重新计算盲盒商品的区间
+     *
      * @param blindboxId
      * @return
      */
     private AjaxResult recalculateNoRange(Integer blindboxId) {
-        /**
-         *   $blindboxDetailModel = new BlindboxDetail();
-         *         $list = $blindboxDetailModel->getAllList(['blindbox_id' => $blindboxId], 'id,probability', 'probability asc')['data'];
-         *
-         *         $min = 0;
-         *         $sysMaxNo = config('shop.hash_total');
-         *         foreach ($list as $vo) {
-         *
-         *             $max = $min + ceil($sysMaxNo * ($vo['probability'] / 100));
-         *             if ($max > $sysMaxNo) {
-         *                 $max = $sysMaxNo;
-         *             }
-         *
-         *             $blindboxDetailModel->updateById([
-         *                 'lottery_min_no' => $min,
-         *                 'lottery_max_no' => $max
-         *             ], $vo['id']);
-         *
-         *             $min = $max + 1;
-         *         }
-         *
-         *         return dataReturn(0, '操作成功');
-         */
         LambdaQueryWrapper<BlindboxDetail> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(BlindboxDetail::getBlindboxId, blindboxId);
         wrapper.orderByAsc(BlindboxDetail::getProbability);
