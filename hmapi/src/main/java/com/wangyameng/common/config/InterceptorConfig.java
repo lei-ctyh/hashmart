@@ -17,14 +17,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new UniappInterceptor())
+                .addPathPatterns("/uniapp/**")
+                //
+                .excludePathPatterns("/uniapp/user/login/loginByWechat","/uniapp/user/address/option","/uniapp/notify/wechat","/uniapp/home/index","/uniapp/goods/shop/goodsList","/uniapp/goods/shop/slider");
+
         // 商户后台拦截
         registry.addInterceptor(new AdminInterceptor())
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/user.login/**");
 
-        registry.addInterceptor(new UniappInterceptor())
-                .addPathPatterns("/uniapp/**")
-                //
-                .excludePathPatterns("/uniapp/user/login/loginByWechat","/uniapp/user/address/option","/uniapp/notify/wechat");
-    }
+            }
 }
