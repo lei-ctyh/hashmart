@@ -25,13 +25,7 @@ public class OrderRecordDetailServiceImpl implements OrderRecordDetailService {
     private OrderRecordDetailDao orderRecordDetailDao;
     @Override
     public AjaxResult getList(Integer orderRecordId, Integer page, Integer limit) {
-        /**
-         * $where[] = ['order_record_id', '=', $param['order_record_id']];
-         *         $orderRecordDetailModel = new OrderRecordDetail();
-         *         $list = $orderRecordDetailModel->where($where)->order('id asc')->paginate($param['limit']);
-         *
-         *         return pageReturn(dataReturn(0, 'success', $list));
-         */
+
         LambdaQueryWrapper<OrderRecordDetail> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(OrderRecordDetail::getOrderRecordId, orderRecordId);
         wrapper.orderByAsc(OrderRecordDetail::getId);

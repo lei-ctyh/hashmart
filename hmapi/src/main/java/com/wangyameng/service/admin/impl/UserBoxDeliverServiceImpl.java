@@ -41,7 +41,7 @@ public class UserBoxDeliverServiceImpl implements UserBoxDeliverService {
             queryWrapper.eq(UserBoxDeliver::getUserId, userId);
         }
         queryWrapper.orderByDesc(UserBoxDeliver::getCreateTime);
-        Page<UserBoxDeliver> ipage = userBoxDeliverDao.selectPage(new Page<UserBoxDeliver>(page, limit), queryWrapper);
+        Page<UserBoxDeliver> ipage = userBoxDeliverDao.selectPage(new Page<>(page, limit), queryWrapper);
         JSONObject rtnJson = new JSONObject();
         rtnJson.put("total", ipage.getTotal());
         JSONArray rows = new JSONArray();
@@ -49,6 +49,10 @@ public class UserBoxDeliverServiceImpl implements UserBoxDeliverService {
             rows.add(PubfuncUtil.parseToUnderlineJson(userBoxDeliver));
         }
         rtnJson.put("rows", rows);
+        queryWrapper.eq(UserBoxDeliver::getStatus, 1);
+
+        rtnJson.put("not_express", userBoxDeliverDao.selectCount(queryWrapper));
+
         return AjaxResult.dataReturn(0, "success", rtnJson);
     }
 }
