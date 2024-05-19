@@ -128,9 +128,9 @@ public class ShopServiceImpl implements ShopService {
             rtnData.put("sub_title", goods.getSubTitle());
             rtnData.put("image", PubfuncUtil.replaceBecomeServerHost(goods.getImage()));
             rtnData.put("stock", goods.getStock());
-            rtnData.put("price", goods.getPrice());
-            rtnData.put("delivery_fee", goods.getDeliveryFee());
-            rtnData.put("integral_price", goods.getIntegralPrice());
+            rtnData.put("price", goods.getPrice()+"");
+            rtnData.put("delivery_fee", goods.getDeliveryFee()+"");
+            rtnData.put("integral_price", goods.getIntegralPrice()+"");
             rtnData.put("sales", goods.getSales());
             rtnData.put("content", PubfuncUtil.replaceBecomeServerHost(goods.getContent()));
             LambdaQueryWrapper<GoodsRule> ruleQueryWrapper = new LambdaQueryWrapper<>();
@@ -141,7 +141,7 @@ public class ShopServiceImpl implements ShopService {
                 rule.put("rule", JSONArray.parseArray(UnicodeUtil.toString(StringUtils.defaultString(goodsRule.getRule(), ""))));
                 rtnData.put("rule", rule);
             } else {
-                rtnData.put("rule", new JSONArray());
+                rtnData.put("rule", null);
             }
             JSONArray rtnRuleExtend = new JSONArray();
             if (goods.getType() == 2) {
