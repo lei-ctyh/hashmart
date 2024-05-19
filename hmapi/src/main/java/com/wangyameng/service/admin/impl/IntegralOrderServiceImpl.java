@@ -8,10 +8,14 @@ import com.sun.org.apache.xpath.internal.operations.Or;
 import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.common.util.pubfunc.PubfuncUtil;
 import com.wangyameng.dao.OrderDao;
+import com.wangyameng.dao.SysExpressDao;
 import com.wangyameng.entity.Order;
+import com.wangyameng.entity.SysExpress;
 import com.wangyameng.service.admin.IntegralOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author zhanglei
@@ -24,6 +28,8 @@ import org.springframework.stereotype.Service;
 public class IntegralOrderServiceImpl implements IntegralOrderService {
     @Autowired
     OrderDao orderDao;
+    @Autowired
+    SysExpressDao sysExpressDao;
     @Override
     public AjaxResult getList(Integer status, String userName, String orderNo, String payOrderNo, Integer userId, Integer page, Integer limit) {
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
@@ -57,6 +63,24 @@ public class IntegralOrderServiceImpl implements IntegralOrderService {
 
         wrapper.eq(Order::getStatus, 2);
         rtnJson.put("not_express", orderDao.selectCount(wrapper));
+        return AjaxResult.dataReturn(0, "success", rtnJson);
+    }
+
+    @Override
+    public AjaxResult getExpressList() {
+        LambdaQueryWrapper<SysExpress> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysExpress::getStatus, 1);
+        List<SysExpress> sysExpresses = sysExpressDao.selectList(wrapper);
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("code", 0);
+        rtnJson.put("msg", "success");
+
+        JSONArray data = new JSONArray();
+        for (SysExpress sysExpress : sysExpresses) {
+            data.add(PubfuncUtil.parseToUnderlineJson(sysExpress));
+        }
+        rtnJson.put("data", data);
+
         return AjaxResult.dataReturn(0, "success", rtnJson);
     }
 }

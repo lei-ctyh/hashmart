@@ -1,6 +1,7 @@
 package com.wangyameng.service.admin;
 
 import com.wangyameng.common.core.AjaxResult;
+import com.wangyameng.dto.UserBoxDeliverReq;
 
 /**
  * @author zhanglei
@@ -8,4 +9,8 @@ import com.wangyameng.common.core.AjaxResult;
  */
 public interface UserBoxDeliverService {
     AjaxResult getList(String deliverNo, String status, String userId, Integer page, Integer limit);
+
+    AjaxResult deliver(UserBoxDeliverReq userBoxDeliverReq);
+
+    AjaxResult getOrderInfo(Integer id);
 }

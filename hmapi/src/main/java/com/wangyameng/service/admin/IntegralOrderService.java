@@ -11,4 +11,6 @@ import com.wangyameng.common.core.AjaxResult;
  */
 public interface IntegralOrderService {
     AjaxResult getList(Integer status, String userName, String orderNo, String payOrderNo, Integer userId, Integer page, Integer limit);
+
+    AjaxResult getExpressList();
 }

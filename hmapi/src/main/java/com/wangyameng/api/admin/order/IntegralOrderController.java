@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class IntegralOrderController {
     @Autowired
     private IntegralOrderService integralOrderService;
+
     @GetMapping("/admin/order.integralOrder/index")
     // status=&user_name=&order_no=&pay_order_no=&user_id=&page=1&limit
     public AjaxResult index(Integer status, String user_name, String order_no, String pay_order_no, Integer user_id, Integer page, Integer limit) {
@@ -24,6 +25,8 @@ public class IntegralOrderController {
         return integralOrderService.getList(status, user_name, order_no, pay_order_no, user_id, page, limit);
     }
 
-
-
+    @GetMapping("/admin/order.integralOrder/expressList")
+    public AjaxResult expressList() {
+        return integralOrderService.getExpressList();
+    }
 }
