@@ -144,7 +144,7 @@ public class ShopOrderServiceImpl implements ShopOrderService {
         order.setPayIntegral(trailDataJson.getDoubleValue("total_price") + postage);
         order.setPayStatus(1);
         order.setAddressId(Integer.valueOf(address));
-        order.setAddressInfo(addressInfo.toString());
+        order.setAddressInfo(JSONObject.from(addressInfo).toString());
         order.setStatus(1);
         order.setCreateTime(new Date());
         orderDao.insert(order);

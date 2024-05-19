@@ -35,7 +35,7 @@ public class BlindBoxOrderServiceImpl implements BlindBoxOrderService {
     @Override
     public AjaxResult getList(String orderNo, String payOrderNo, String userName, String payStatus, Integer page, Integer limit) {
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Order::getType, 1);
+        queryWrapper.eq(Order::getType, 2);
 
         if (StringUtils.isNotBlank(orderNo)) {
             queryWrapper.like(Order::getOrderNo, orderNo);
