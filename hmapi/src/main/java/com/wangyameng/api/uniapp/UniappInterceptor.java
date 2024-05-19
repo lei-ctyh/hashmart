@@ -34,13 +34,13 @@ public class UniappInterceptor implements HandlerInterceptor {
             int jwtStrMinLen = 7;
             if (StringUtils.isBlank(token) || token.length()<jwtStrMinLen) {
                 response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().println(AjaxResult.dataReturn(401, "登录过期"));
+                response.getWriter().println(AjaxResult.dataReturn(401, "登录过期，请重新登录").toJson());
                 return false;
             }
             JWT jwt = PubfuncUtil.getJWT(token.substring(jwtStrMinLen));
             if (jwt == null) {
                 response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().println(AjaxResult.dataReturn(401, "登录过期"));
+                response.getWriter().println(AjaxResult.dataReturn(401, "登录过期，请重新登录").toJson());
                 return false;
             }
             JWTPayload payload = jwt.getPayload();

@@ -19,13 +19,26 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new UniappInterceptor())
                 .addPathPatterns("/uniapp/**")
-                //
-                .excludePathPatterns("/uniapp/user/login/loginByWechat","/uniapp/user/address/option","/uniapp/notify/wechat","/uniapp/home/index","/uniapp/goods/shop/goodsList","/uniapp/goods/shop/slider");
+                .excludePathPatterns(
+                        // 微信登录
+                        "/uniapp/user/login/loginByWechat",
+                        // 商城首页
+                        "/uniapp/goods/shop/**",
+                        // 支付回调地址
+                        "/uniapp/notify/**",
+                        // 首页
+                        "/uniapp/home/index",
+                        // 城市数据，音乐资源，客服联系方式等
+                        "/uniapp/common/**",
+                        // 盲盒货品详情
+                        "/uniapp/goods/**",
+                        // 省市区数据
+                        "/uniapp/user/address/option");
 
         // 商户后台拦截
         registry.addInterceptor(new AdminInterceptor())
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/user.login/**");
 
-            }
+    }
 }
