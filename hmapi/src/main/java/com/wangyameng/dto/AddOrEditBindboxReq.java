@@ -1,7 +1,7 @@
 package com.wangyameng.dto;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName AddOrEditBindboxReq.java
  * @Description TODO

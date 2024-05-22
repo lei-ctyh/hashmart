@@ -1,7 +1,7 @@
 package com.wangyameng.common.enums;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName PayWay.java
  * @Description TODO

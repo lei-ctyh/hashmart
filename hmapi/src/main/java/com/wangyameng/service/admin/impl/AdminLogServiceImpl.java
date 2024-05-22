@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName AdminLogServiceimpl.java
  * @Description TODO

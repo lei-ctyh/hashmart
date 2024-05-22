@@ -3,7 +3,7 @@ package com.wangyameng.service.admin;
 import com.wangyameng.common.core.AjaxResult;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName HomeDataService.java
  * @Description TODO

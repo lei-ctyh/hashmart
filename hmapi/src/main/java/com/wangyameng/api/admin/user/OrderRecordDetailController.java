@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName OrderRecordDetailController.java
  * @Description TODO

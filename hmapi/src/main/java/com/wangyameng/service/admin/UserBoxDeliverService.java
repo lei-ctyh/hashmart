@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.UserBoxDeliverReq;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年05月16日 22:49
  */
 public interface UserBoxDeliverService {

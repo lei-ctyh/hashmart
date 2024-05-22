@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import static com.wangyameng.common.util.pay.WechatPayUtil.generatePayParams;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName WeiCheatPayImpl.java
  * @Description TODO

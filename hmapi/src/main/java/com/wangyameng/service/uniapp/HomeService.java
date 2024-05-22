@@ -3,7 +3,7 @@ package com.wangyameng.service.uniapp;
 import com.wangyameng.common.core.AjaxResult;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2023年11月14日 18:14
  */
 public interface HomeService {

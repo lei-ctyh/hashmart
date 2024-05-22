@@ -3,7 +3,7 @@ package com.wangyameng.service.uniapp;
 import com.wangyameng.common.core.AjaxResult;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0
  * @description: TODO
  * @date 2024/2/20 21:19

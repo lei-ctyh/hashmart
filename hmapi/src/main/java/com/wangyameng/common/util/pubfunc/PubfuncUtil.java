@@ -21,7 +21,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName PubfuncUtil.java
  * @Description 公共方法工具类

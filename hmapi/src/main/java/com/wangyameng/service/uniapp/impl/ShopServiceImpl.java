@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName ShopServiceImpl.java
  * @Description TODO

@@ -1,7 +1,7 @@
 package com.wangyameng.common.constant;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName Constants.java
  * @Description 通用常量类

@@ -3,7 +3,7 @@ package com.wangyameng.service.uniapp;
 import com.wangyameng.common.core.AjaxResult;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年04月11日 10:45
  */
 public interface OrderService {

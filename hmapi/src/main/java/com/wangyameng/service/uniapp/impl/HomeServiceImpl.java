@@ -21,7 +21,7 @@ import java.util.List;
 import static com.wangyameng.service.uniapp.ActivityService.SLIDER_TYPE_INDEX;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName HomeServiceImpl.java
  * @Description TODO

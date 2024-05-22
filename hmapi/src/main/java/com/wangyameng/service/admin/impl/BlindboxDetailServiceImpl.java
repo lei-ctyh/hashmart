@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName BlindboxDetailServiceImpl.java
  * @Description TODO

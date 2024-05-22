@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName GoodsServiceImpl.java
  * @Description TODO

@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName GoodsCatServiceImpl.java
  * @Description TODO

@@ -3,7 +3,7 @@ package com.wangyameng.service.admin;
 import com.wangyameng.common.core.AjaxResult;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年05月17日 22:37
  */
 public interface BlindBoxOrderService {

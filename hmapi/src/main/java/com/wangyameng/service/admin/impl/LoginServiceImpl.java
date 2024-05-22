@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName LoginServiceImpl.java
  * @Description TODO

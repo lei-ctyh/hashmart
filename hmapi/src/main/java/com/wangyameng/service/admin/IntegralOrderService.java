@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.IntegralOrderDeliverReq;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName IntegralOrderService.java
  * @Description TODO

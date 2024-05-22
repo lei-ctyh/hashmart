@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName BlindboxServiceImpl.java
  * @Description TODO

@@ -3,7 +3,7 @@ package com.wangyameng.dto;
 import java.util.Date;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0
  * @description: TODO
  * @date 2024/2/29 20:52

@@ -4,7 +4,7 @@ import cn.hutool.jwt.JWT;
 import com.wangyameng.entity.SysAdminLog;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName AdminLogService.java
  * @Description 日志服务类

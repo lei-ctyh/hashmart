@@ -5,7 +5,7 @@ import com.wangyameng.common.core.AjaxResult;
 import java.util.List;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年05月16日 23:29
  */
 public interface OrderRecordService {

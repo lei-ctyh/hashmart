@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.util.Date;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName BoxExchangeDTO.java
  * @Description TODO

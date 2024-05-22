@@ -5,7 +5,7 @@ import com.wangyameng.common.core.AjaxResult;
 import java.util.Map;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年04月10日 12:51
  */
 public interface AddressService {

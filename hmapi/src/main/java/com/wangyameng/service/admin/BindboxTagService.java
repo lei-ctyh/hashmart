@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.AddOrEditBlindboxTagReq;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName BindboxTagService.java
  * @Description TODO

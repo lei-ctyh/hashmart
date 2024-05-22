@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.AddOrEditBlindboxDetailReq;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName BlindboxDetailService.java
  * @Description TODO

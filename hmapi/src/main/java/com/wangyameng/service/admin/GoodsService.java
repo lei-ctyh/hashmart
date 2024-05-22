@@ -8,7 +8,7 @@ import com.wangyameng.dto.ShelvesGoodReq;
 import java.util.List;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName GoodsService.java
  * @Description TODO

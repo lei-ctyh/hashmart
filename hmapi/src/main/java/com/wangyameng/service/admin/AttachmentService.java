@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName AttachmentService.java
  * @Description TODO

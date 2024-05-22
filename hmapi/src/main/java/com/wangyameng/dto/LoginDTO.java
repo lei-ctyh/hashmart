@@ -4,7 +4,7 @@ package com.wangyameng.dto;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName LoginDto.java
  * @Description 后台登录请求体

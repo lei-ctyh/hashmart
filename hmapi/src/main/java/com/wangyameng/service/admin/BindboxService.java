@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.AddOrEditBindboxReq;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年05月14日 21:34
  */
 public interface BindboxService {

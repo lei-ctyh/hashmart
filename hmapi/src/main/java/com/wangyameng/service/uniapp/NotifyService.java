@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName NotifyService.java
  * @Description TODO

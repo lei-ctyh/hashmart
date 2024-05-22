@@ -14,7 +14,7 @@ import java.util.UUID;
 
 */
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName UploadFileUtil.java
  * @Description TODO

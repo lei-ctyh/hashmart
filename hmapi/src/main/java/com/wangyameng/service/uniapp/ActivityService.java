@@ -4,7 +4,7 @@ package com.wangyameng.service.uniapp;
 import com.alibaba.fastjson2.JSONArray;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName ActivityService.java
  * @Description TODO

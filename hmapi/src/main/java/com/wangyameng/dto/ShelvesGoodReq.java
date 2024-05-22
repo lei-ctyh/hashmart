@@ -3,7 +3,7 @@ package com.wangyameng.dto;
 import java.util.List;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName ShelvesGoodReq.java
  * @Description TODO

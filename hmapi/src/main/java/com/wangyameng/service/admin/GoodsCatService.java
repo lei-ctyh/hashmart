@@ -4,7 +4,7 @@ import com.wangyameng.common.core.AjaxResult;
 import com.wangyameng.dto.AddOrEditGoodCateReq;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年05月05日 23:39
  */
 public interface GoodsCatService {

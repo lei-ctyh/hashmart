@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName BaseInterceptor.java
  * @Description 后台JWT 拦截器

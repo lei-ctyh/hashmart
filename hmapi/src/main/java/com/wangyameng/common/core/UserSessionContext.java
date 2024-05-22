@@ -3,7 +3,7 @@ package com.wangyameng.common.core;
 import com.alibaba.fastjson2.JSONObject;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @version 1.0.0
  * @ClassName UserSessionContext.java
  * @Description 用户会话上下文

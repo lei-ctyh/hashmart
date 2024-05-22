@@ -3,7 +3,7 @@ package com.wangyameng.service.uniapp;
 import com.wangyameng.common.core.AjaxResult;
 
 /**
- * @author zhanglei
+ * @author wangyameng
  * @date 2024年04月10日 11:31
  */
 public interface BagService {
