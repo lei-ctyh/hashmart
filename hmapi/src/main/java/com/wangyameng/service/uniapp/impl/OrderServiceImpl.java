@@ -252,6 +252,7 @@ public class OrderServiceImpl implements OrderService {
         JSONObject resultData = new JSONObject();
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Order::getOrderNo, orderNo);
+        queryWrapper.or(wq -> wq.eq(Order::getPayOrderNo, orderNo));
         Order order = orderDao.selectOne(queryWrapper);
         if (order == null) {
             return AjaxResult.dataReturn(-1, "订单信息错误");

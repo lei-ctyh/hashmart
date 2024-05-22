@@ -37,8 +37,8 @@ public class UserController {
         return userService.orderRecordLog(page, limit);
     }
 
-    @GetMapping("uniapp/order/list")
-    public AjaxResult orderRecordLog( String token, int page, int limit, int status) {
+    @GetMapping("uniapp/user/order/list")
+    public AjaxResult orderList( String token, int page, int limit, int status) {
 
         return userService.orderList(token, page, limit, status);
     }

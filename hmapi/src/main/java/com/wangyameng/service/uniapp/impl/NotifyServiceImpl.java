@@ -101,7 +101,7 @@ public class NotifyServiceImpl implements NotifyService {
 
     private void dealOrder(JSONObject respJson) {
         String outTradeNo = respJson.getString("out_trade_no");
-        if (outTradeNo.startsWith("B")) {
+        if (outTradeNo.startsWith("O")) {
             // 处理盲盒支付订单
             dealBlindBoxOrder(respJson);
         }
@@ -140,6 +140,7 @@ public class NotifyServiceImpl implements NotifyService {
         String transactionId = respJson.getString("transaction_id");
 
         wrapper.eq(Order::getPayOrderNo, outTradeNo);
+        wrapper.or( wq->wq.eq(Order::getOrderNo, outTradeNo));
 
         Order order = orderDao.selectOne(wrapper);
         if (order == null) {
