@@ -66,13 +66,13 @@ public class LoginServiceImpl implements LoginService {
         adminWrapper.eq(SysAdmin::getUsername, username);
         SysAdmin sysAdmin = sysAdminDao.selectOne(adminWrapper);
         if (sysAdmin == null) {
-            return AjaxResult.dataReturn(-2, "用户名密码错误");
+            return AjaxResult.dataReturn(-2, "用户不存在");
         }
 
         // 验证密码
         String encryptPwd = PubfuncUtil.makePassword(password, sysAdmin.getSalt());
         String dbPwd = sysAdmin.getPassword();
-        if (StringUtils.equals(encryptPwd, dbPwd)) {
+        if (!StringUtils.equals(encryptPwd, dbPwd)) {
             return AjaxResult.dataReturn(-3, "用户密码错误");
         }
 
@@ -152,13 +152,14 @@ public class LoginServiceImpl implements LoginService {
     private JSONArray getMenuList(SysRole sysRole) {
         JSONArray menuJsonArr = new JSONArray();
         // 超级管理员直接是全部权限
-        LambdaQueryWrapper<SysMenu> menuWrapper = null;
+        LambdaQueryWrapper<SysMenu> menuWrapper = new LambdaQueryWrapper<>();;
         if (sysRole.getId() != 1) {
-            menuWrapper = new LambdaQueryWrapper<>();
-            menuWrapper.eq(SysMenu::getStatus, 1)
-                       .in(SysMenu::getId, sysRole.getRule())
+            JSONArray roleRule = JSONArray.parseArray(sysRole.getRule());
+            menuWrapper.in(SysMenu::getId,roleRule )
                        .orderByDesc(SysMenu::getSort);
         }
+        menuWrapper.eq(SysMenu::getStatus, 1);
+        menuWrapper.orderByAsc(SysMenu::getSort);
         List<SysMenu> menuList = sysMenuDao.selectList(menuWrapper);
         for (SysMenu sysMenu : menuList) {
             JSONObject menuJson = new JSONObject();

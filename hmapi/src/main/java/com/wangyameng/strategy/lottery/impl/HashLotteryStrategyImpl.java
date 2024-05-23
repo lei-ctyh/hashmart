@@ -184,6 +184,6 @@ public class HashLotteryStrategyImpl implements LotteryStrategy {
         long seed = tillTime + hashKey.hashCode();
         System.out.println(seed+"当前种子");
         Random random = new Random(seed);
-        return random.nextInt(10000);
+        return random.nextInt(1048575);
     }
 }

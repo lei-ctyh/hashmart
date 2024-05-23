@@ -63,6 +63,7 @@ public class GoodsServiceImpl implements GoodsService {
         if (StringUtils.isNotBlank(goodsListReq.getGoods_type())) {
             queryWrapper.eq(Goods::getGoodsType, goodsListReq.getGoods_type());
         }
+        queryWrapper.eq(Goods::getDeleteFlag, 1);
         queryWrapper.orderByDesc(Goods::getId);
 
         IPage<Goods> iPage = goodsDao.selectPage(new Page<>(goodsListReq.getPage(), goodsListReq.getLimit()), queryWrapper);
@@ -255,7 +256,8 @@ public class GoodsServiceImpl implements GoodsService {
     public AjaxResult delGood(Integer id) {
         Goods goods = goodsDao.selectById(id);
         goods.setDeleteFlag(2);
-        return AjaxResult.dataReturn(0, "success");
+        goodsDao.updateById(goods);
+        return AjaxResult.dataReturn(0, "删除成功");
     }
 
     @Override

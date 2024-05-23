@@ -43,7 +43,7 @@ public class GoodsController {
         return goodsService.editGood(req);
     }
 
-    @PostMapping("/admin/goods.goods/del")
+    @GetMapping("/admin/goods.goods/del")
     public AjaxResult delete(Integer id) throws Exception {
         return goodsService.delGood(id);
     }

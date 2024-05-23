@@ -32,23 +32,23 @@
 			</el-col>
 		</el-row>
 
-		<el-row :gutter="15">
-			<el-col :lg="3">
-				<div class="function-card">
+		<el-row :gutter="50">
+		<!--	<el-col :lg="3">
+				<div class="function-card" v-if="false">
 					<a href="#/user/index">
 						<el-icon style="font-size:28px;margin-top: 20px;color:#66B1FF"><component :is="iconData.userIcon" /></el-icon>
 						<p style="margin-top:8px;font-size:14px">用户管理</p>
 					</a>
 				</div>
-			</el-col>
-			<el-col :lg="3">
-				<div class="function-card">
+			</el-col>-->
+		<!--	<el-col :lg="3">
+				<div class="function-card"  v-if="false">
 					<a href="#/sotre/index">
 						<el-icon style="font-size:28px;margin-top: 20px;color:#67C23A"><component :is="iconData.setIcon" /></el-icon>
 						<p style="margin-top:8px;font-size:14px">存储引擎</p>
 					</a>
 				</div>
-			</el-col>
+			</el-col>-->
 			<el-col :lg="3">
 				<div class="function-card">
 					<a href="#/goods/index">
@@ -81,22 +81,22 @@
 					</a>
 				</div>
 			</el-col>
-			<el-col :lg="3">
-				<div class="function-card">
+			<!--<el-col :lg="3">
+				<div class="function-card" v-if="false">
 					<a href="#/paySetting/index">
 						<el-icon style="font-size:28px;margin-top: 20px;color:#F56C6C"><component :is="iconData.payIcon" /></el-icon>
 						<p style="margin-top:8px;font-size:14px">支付设置</p>
 					</a>
 				</div>
-			</el-col>
-			<el-col :lg="3">
-				<div class="function-card">
+			</el-col>-->
+			<!--<el-col :lg="3">
+				<div class="function-card" v-if="false">
 					<a href="#/messageSetting/index">
 						<el-icon style="font-size:28px;margin-top: 20px;color:#F56C6C"><component :is="iconData.smsIcon" /></el-icon>
 						<p style="margin-top:8px;font-size:14px">短信设置</p>
 					</a>
 				</div>
-			</el-col>
+			</el-col>-->
 		</el-row>
 
 		<el-row :gutter="15" style="margin-top:20px">
